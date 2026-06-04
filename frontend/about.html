@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="About Manish General Store — serving the Bundu community with fresh groceries and daily essentials since 1998.">
+    <title>Manish General Store | About Us</title>
+    <link rel="icon" type="image/png" href="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ── Design System ── */
+        :root {
+            --primary: #1a5c2a;
+            --primary-light: #2e7d3c;
+            --primary-hover: #134520;
+            --accent: #e8501a;
+            --accent-light: #ff6b35;
+            --bg: #f4f8f2;
+            --card-bg: #ffffff;
+            --text: #1c2b1e;
+            --text-muted: #6b7c6e;
+            --border: #d4e8ca;
+            --gold: #f5a623;
+            --speed: 0.3s;
+            --radius: 14px;
+            --shadow-card: 0 2px 16px rgba(26, 92, 42, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 16px 40px rgba(26, 92, 42, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(46, 125, 60, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(46, 125, 60, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ================================
+           HEADER
+        ================================ */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            height: 70px;
+            box-shadow: 0 4px 20px rgba(26, 92, 42, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+        }
+
+        .logo-sub {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-top: 1px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            transition: background var(--speed) ease, color var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .cart-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 0.45rem 1rem !important;
+            border-radius: 20px !important;
+            position: relative;
+        }
+
+        .cart-link:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+        }
+
+        .cart-icon {
+            font-size: 1rem;
+        }
+
+        .cart-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            transform: scale(0);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .cart-badge.visible {
+            transform: scale(1);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* ================================
+           HERO — full-bleed, text-centric
+        ================================ */
+        .about-hero {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 55%, var(--primary-light) 100%);
+            color: #fff;
+            text-align: center;
+            padding: 6rem 2rem 5.5rem;
+            overflow: hidden;
+        }
+
+        /* Large decorative blobs */
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.035);
+            top: -220px;
+            left: -150px;
+        }
+
+        .about-hero::after {
+            content: '';
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            bottom: -160px;
+            right: -80px;
+        }
+
+        /* Thin horizontal rule accent */
+        .hero-rule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.6rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-rule::before,
+        .hero-rule::after {
+            content: '';
+            flex: 1;
+            max-width: 60px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            padding: 0.4rem 1.1rem;
+            border-radius: 20px;
+        }
+
+        .about-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.3rem;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .about-hero h1 em {
+            font-style: italic;
+            color: #a5d6a7;
+        }
+
+        .about-hero .hero-lead {
+            font-size: 1.12rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 520px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.78;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stat row inside hero */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .hero-stat {
+            flex: 1;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .hero-stat:last-child {
+            border-right: none;
+        }
+
+        .hero-stat .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            display: block;
+        }
+
+        .hero-stat .stat-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        /* ================================
+           SHARED LAYOUT HELPERS
+        ================================ */
+        .section-eyebrow {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--primary-light);
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            max-width: 40px;
+            background: var(--border);
+        }
+
+        /* ================================
+           STORY SECTION — alternating grid
+        ================================ */
+        .story-section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+            overflow: hidden;
+        }
+
+        .story-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6rem;
+        }
+
+        /* Each alternating story block */
+        .story-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        /* Second block: flip columns */
+        .story-block.reverse {
+            direction: rtl;
+        }
+
+        .story-block.reverse>* {
+            direction: ltr;
+        }
+
+        /* Image side */
+        .story-img-wrap {
+            position: relative;
+        }
+
+        .story-img-wrap img {
+            width: 100%;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-hover);
+            object-fit: cover;
+            display: block;
+            aspect-ratio: 4/3;
+        }
+
+        /* Decorative offset accent */
+        .story-img-wrap::before {
+            content: '';
+            position: absolute;
+            inset: 14px -14px -14px 14px;
+            border-radius: var(--radius);
+            background: var(--primary-light);
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .story-block.reverse .story-img-wrap::before {
+            inset: 14px 14px -14px -14px;
+        }
+
+        /* Year badge on image */
+        .story-year-badge {
+            position: absolute;
+            bottom: -18px;
+            left: 24px;
+            background: var(--primary);
+            color: #fff;
+            padding: 0.65rem 1.3rem;
+            border-radius: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 8px 24px rgba(26, 92, 42, 0.3);
+            line-height: 1;
+        }
+
+        .story-year-badge small {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-bottom: 2px;
+        }
+
+        .story-block.reverse .story-year-badge {
+            left: auto;
+            right: 24px;
+        }
+
+        /* Text side */
+        .story-text {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .story-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.85rem, 3vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.18;
+        }
+
+        .story-text h2 span {
+            color: var(--primary);
+        }
+
+        .story-text p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .story-quote {
+            margin-top: 0.4rem;
+            padding: 1.1rem 1.5rem;
+            background: linear-gradient(135deg, rgba(26, 92, 42, 0.06), rgba(46, 125, 60, 0.03));
+            border-left: 3px solid var(--primary-light);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-size: 0.97rem;
+            font-style: italic;
+            color: var(--primary-hover);
+            font-weight: 500;
+            line-height: 1.65;
+        }
+
+        /* Timeline dots between blocks */
+        .story-timeline-dot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: -2rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .story-timeline-dot::before,
+        .story-timeline-dot::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+            max-width: 200px;
+        }
+
+        .story-timeline-dot .dot-inner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-card);
+            flex-shrink: 0;
+        }
+
+        /* ================================
+           MILESTONES / TIMELINE STRIP
+        ================================ */
+        .milestones-section {
+            position: relative;
+            z-index: 1;
+            background: var(--primary);
+            padding: 5rem 2rem;
+            overflow: hidden;
+        }
+
+        .milestones-section::before {
+            content: '';
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            top: -300px;
+            right: -200px;
+            pointer-events: none;
+        }
+
+        .milestones-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .milestones-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .milestones-header .section-eyebrow {
+            color: #a5d6a7;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .milestones-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .milestones-track {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            position: relative;
+            gap: 0;
+        }
+
+        /* Horizontal connector line */
+        .milestones-track::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: calc(12.5%);
+            right: calc(12.5%);
+            height: 2px;
+            background: rgba(255, 255, 255, 0.15);
+            z-index: 0;
+        }
+
+        .milestone-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            animation: cardIn 0.5s ease forwards;
+        }
+
+        .milestone-item:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .milestone-item:nth-child(2) {
+            animation-delay: 0.18s;
+        }
+
+        .milestone-item:nth-child(3) {
+            animation-delay: 0.31s;
+        }
+
+        .milestone-item:nth-child(4) {
+            animation-delay: 0.44s;
+        }
+
+        .milestone-dot {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1.1rem;
+            transition: background 0.25s, border-color 0.25s, transform 0.25s;
+        }
+
+        .milestone-item:hover .milestone-dot {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .milestone-year {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .milestone-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #a5d6a7;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 0.4rem;
+        }
+
+        .milestone-desc {
+            font-size: 0.83rem;
+            color: rgba(255, 255, 255, 0.62);
+            line-height: 1.6;
+        }
+
+        /* ================================
+           VALUES / WHY CHOOSE US
+        ================================ */
+        .values-section {
+            position: relative;
+            z-index: 1;
+            background: var(--card-bg);
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .values-section .section-eyebrow {
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+
+        .values-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.9rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 0.55rem;
+        }
+
+        .values-section .section-intro {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto 3.75rem;
+            line-height: 1.75;
+        }
+
+        .values-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.75rem;
+        }
+
+        .value-card {
+            background: var(--bg);
+            padding: 2.4rem 1.8rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
+            text-align: left;
+            transition: transform var(--speed) ease, box-shadow var(--speed) ease, border-color var(--speed) ease;
+            opacity: 0;
+            animation: cardIn 0.52s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle top accent line per card */
+        .value-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), transparent);
+            opacity: 0;
+            transition: opacity var(--speed) ease;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .value-card:hover::before {
+            opacity: 1;
+        }
+
+        .value-card:nth-child(1) {
+            animation-delay: 0.07s;
+        }
+
+        .value-card:nth-child(2) {
+            animation-delay: 0.17s;
+        }
+
+        .value-card:nth-child(3) {
+            animation-delay: 0.27s;
+        }
+
+        .value-card:nth-child(4) {
+            animation-delay: 0.37s;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(22px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .value-card:hover {
+            transform: translateY(-7px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(46, 125, 60, 0.25);
+        }
+
+        .value-icon-wrap {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(26, 92, 42, 0.1), rgba(46, 125, 60, 0.05));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.65rem;
+            margin-bottom: 1.3rem;
+            border: 1px solid var(--border);
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+
+        .value-card:hover .value-icon-wrap {
+            transform: scale(1.08) rotate(-3deg);
+            background: linear-gradient(135deg, rgba(26, 92, 42, 0.15), rgba(46, 125, 60, 0.08));
+        }
+
+        .value-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: var(--primary-hover);
+            margin-bottom: 0.55rem;
+        }
+
+        .value-card p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.68;
+        }
+
+        /* ================================
+           TEAM / FOUNDER SPOTLIGHT
+        ================================ */
+        .founder-section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+            background: var(--bg);
+        }
+
+        .founder-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .founder-avatar-wrap {
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .founder-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            box-shadow: 0 16px 48px rgba(26, 92, 42, 0.22);
+            border: 4px solid var(--card-bg);
+            outline: 3px solid var(--border);
+        }
+
+        .founder-badge {
+            position: absolute;
+            bottom: 8px;
+            right: -8px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(232, 80, 26, 0.3);
+        }
+
+        .founder-text .section-eyebrow {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .founder-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.75rem, 3vw, 2.3rem);
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .founder-text h2 span {
+            color: var(--primary);
+        }
+
+        .founder-text p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 0.85rem;
+        }
+
+        .founder-text p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .founder-signature {
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .founder-sig-line {
+            width: 48px;
+            height: 2px;
+            background: var(--primary-light);
+            opacity: 0.5;
+        }
+
+        .founder-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .founder-role {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* ================================
+           CTA STRIP
+        ================================ */
+        .cta-strip {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            text-align: center;
+            padding: 5rem 2rem;
+            overflow: hidden;
+        }
+
+        .cta-strip::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            top: -200px;
+            right: -100px;
+        }
+
+        .cta-strip::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            bottom: -120px;
+            left: -60px;
+        }
+
+        .cta-strip h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.9rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-strip p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 460px;
+            margin: 0 auto 2.25rem;
+            line-height: 1.75;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #fff;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.8rem 1.9rem;
+            border-radius: 25px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: transparent;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.8rem 1.9rem;
+            border-radius: 25px;
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ================================
+           FOOTER
+        ================================ */
+        footer {
+            background: var(--primary-hover);
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .footer-brand .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.83rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+            max-width: 220px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .footer-right {
+            text-align: right;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            padding: 1rem 2rem;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================ */
+        @media (max-width: 1024px) {
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .milestones-track {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2.5rem;
+            }
+
+            .milestones-track::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .story-block {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                direction: ltr;
+            }
+
+            .story-block.reverse>* {
+                direction: ltr;
+            }
+
+            .story-img-wrap::before {
+                display: none;
+            }
+
+            .story-text {
+                align-items: flex-start;
+            }
+
+            .founder-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .founder-avatar-wrap {
+                justify-self: center;
+            }
+
+            .founder-signature {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 1.25rem;
+                height: 62px;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .logo-sub {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav {
+                display: none;
+                position: absolute;
+                top: 62px;
+                left: 0;
+                right: 0;
+                background: var(--primary-hover);
+                flex-direction: column;
+                gap: 0;
+                padding: 0.5rem 0 1rem;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            nav.open {
+                display: flex;
+            }
+
+            nav a {
+                padding: 0.75rem 1.5rem;
+                border-radius: 0;
+                font-size: 1rem;
+                width: 100%;
+            }
+
+            .cart-link {
+                border-radius: 0 !important;
+                padding: 0.75rem 1.5rem !important;
+                background: rgba(255, 255, 255, 0.08);
+                border: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .about-hero {
+                padding: 4rem 1.5rem 3.5rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                border-radius: var(--radius);
+            }
+
+            .hero-stat {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .hero-stat:last-child {
+                border-bottom: none;
+            }
+
+            .story-section {
+                padding: 4rem 1.25rem;
+            }
+
+            .story-inner {
+                gap: 4rem;
+            }
+
+            .values-section {
+                padding: 4rem 1.25rem;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .milestones-section {
+                padding: 4rem 1.25rem;
+            }
+
+            .milestones-track {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .founder-section {
+                padding: 4rem 1.25rem;
+            }
+
+            .founder-avatar {
+                width: 150px;
+                height: 150px;
+                font-size: 3.8rem;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                text-align: center;
+            }
+
+            .footer-brand p {
+                max-width: 100%;
+            }
+
+            .footer-right {
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .story-year-badge {
+                font-size: 1.2rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .story-timeline-dot {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html" class="logo" aria-label="Manish General Store Home">
+            <img src="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3"
+                alt="Manish General Store Logo" class="logo-icon" loading="lazy" onerror="this.style.display='none'">
+            <div>
+                <span class="logo-text">Manish General Store</span>
+                <span class="logo-sub">Bundu, Ranchi</span>
+            </div>
+        </a>
+
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav id="mainNav" role="navigation" aria-label="Main navigation">
+            <a href="index.html">Home</a>
+            <a href="about.html" class="active" aria-current="page">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="cart.html" class="cart-link" aria-label="Cart">
+                <span class="cart-icon">🛒</span>
+                Cart
+                <span class="cart-badge" id="cartBadge" aria-live="polite" aria-label="items in cart">0</span>
+            </a>
+        </nav>
+    </header>
+
+    <section class="about-hero" aria-label="About hero">
+        <div class="hero-rule">
+            <div class="hero-tag">🏪 Est. 1998 · Bundu, Ranchi</div>
+        </div>
+        <h1>More Than a Store.<br><em>A Community Landmark.</em></h1>
+        <p class="hero-lead">For over 26 years, Manish General Store has been where Bundu families come for fresh
+            groceries, honest prices, and a familiar face they can trust.</p>
+        <div class="hero-stats" role="list" aria-label="Store highlights">
+            <div class="hero-stat" role="listitem">
+                <span class="stat-num">26+</span>
+                <span class="stat-label">Years Serving</span>
+            </div>
+            <div class="hero-stat" role="listitem">
+                <span class="stat-num">200+</span>
+                <span class="stat-label">Products</span>
+            </div>
+            <div class="hero-stat" role="listitem">
+                <span class="stat-num">1000s</span>
+                <span class="stat-label">Happy Families</span>
+            </div>
+            <div class="hero-stat" role="listitem">
+                <span class="stat-num">Same Day</span>
+                <span class="stat-label">Delivery</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="story-section" aria-label="Our story">
+        <div class="story-inner">
+
+            <div class="story-block">
+                <div class="story-img-wrap">
+                    <img src="https://placehold.co/800x600/1a5c2a/ffffff?text=Bundu+Bazar+1998&font=Montserrat"
+                        alt="The original Manish General Store in Bundu Bazar, 1998" loading="lazy">
+                    <div class="story-year-badge">
+                        <small>Since</small>
+                        1998
+                    </div>
+                </div>
+                <div class="story-text">
+                    <div class="section-divider">
+                        <span class="section-eyebrow">Our Roots</span>
+                    </div>
+                    <h2>A Single Shelf of Dreams,<br><span>In the Heart of Bundu.</span></h2>
+                    <p>It began with a modest shopfront on the lanes of Purana Bazar Toli. In 1998, Nandulal Gorai
+                        opened a small general store with a clear promise: that every product on his shelves would be
+                        something he'd be proud to put on his own family's table.</p>
+                    <p>The neighbourhood quickly noticed. Regulars came not just for the groceries, but for the warmth —
+                        a store where your name was remembered, your preferences known, and a short wait was always
+                        worth it.</p>
+                    <blockquote class="story-quote">
+                        "We didn't just sell groceries. We became part of daily life — the morning atta, the evening
+                        milk, the festival sweets. That's what we've always been."
+                    </blockquote>
+                </div>
+            </div>
+
+            <div class="story-timeline-dot" aria-hidden="true">
+                <div class="dot-inner">🌱</div>
+            </div>
+
+            <div class="story-block reverse">
+                <div class="story-img-wrap">
+                    <img src="https://placehold.co/800x600/2e7d3c/ffffff?text=Growing+With+Bundu&font=Montserrat"
+                        alt="Expanded store serving the growing Bundu community" loading="lazy">
+                    <div class="story-year-badge">
+                        <small>Two Decades</small>
+                        2010s
+                    </div>
+                </div>
+                <div class="story-text">
+                    <div class="section-divider">
+                        <span class="section-eyebrow">Two Decades Later</span>
+                    </div>
+                    <h2>Growing Alongside<br><span>Every Household.</span></h2>
+                    <p>As Bundu grew, so did we. The shelves expanded, the range deepened, and generations of the same
+                        families continued walking through our doors. From new parents stocking up on essentials to
+                        students grabbing a quick snack — we were there for every life moment.</p>
+                    <p>We kept one thing constant through it all: the personal relationship between us and our
+                        community. No faceless corporation. Just your neighbourhood store, run with care by people who
+                        live here too.</p>
+                </div>
+            </div>
+
+            <div class="story-timeline-dot" aria-hidden="true">
+                <div class="dot-inner">🚀</div>
+            </div>
+
+            <div class="story-block">
+                <div class="story-img-wrap">
+                    <img src="https://placehold.co/800x600/134520/ffffff?text=Now+Online+in+2026&font=Montserrat"
+                        alt="Manish General Store launches online ordering in 2026" loading="lazy">
+                    <div class="story-year-badge">
+                        <small>Online</small>
+                        2026
+                    </div>
+                </div>
+                <div class="story-text">
+                    <div class="section-divider">
+                        <span class="section-eyebrow">Today & Tomorrow</span>
+                    </div>
+                    <h2>Same Trust,<br><span>Now at Your Fingertips.</span></h2>
+                    <p>In 2026, we took that same neighbourhood spirit online. You can now browse our full range, add
+                        items to your cart, and have your groceries delivered straight to your door — same day, every
+                        day — without leaving home.</p>
+                    <p>Whether you visit us in Purana Bazar Toli or order from your phone, the commitment is identical:
+                        fresh products, fair prices, and the kind of service you'd expect from a friend.</p>
+                    <blockquote class="story-quote">
+                        "The medium changed. The promise never will."
+                    </blockquote>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="milestones-section" aria-label="Our milestones">
+        <div class="milestones-inner">
+            <div class="milestones-header">
+                <span class="section-eyebrow">Our Journey</span>
+                <h2>26 Years, One Mission</h2>
+            </div>
+            <div class="milestones-track" role="list">
+                <div class="milestone-item" role="listitem">
+                    <div class="milestone-dot" aria-hidden="true">🏪</div>
+                    <div class="milestone-year">1998</div>
+                    <div class="milestone-title">Doors Open</div>
+                    <p class="milestone-desc">Manish General Store opens its first shopfront in Purana Bazar Toli,
+                        Bundu.</p>
+                </div>
+                <div class="milestone-item" role="listitem">
+                    <div class="milestone-dot" aria-hidden="true">📦</div>
+                    <div class="milestone-year">2008</div>
+                    <div class="milestone-title">100+ Products</div>
+                    <p class="milestone-desc">Expanded range crosses 100 SKUs as the community's trust deepens across
+                        Bundu.</p>
+                </div>
+                <div class="milestone-item" role="listitem">
+                    <div class="milestone-dot" aria-hidden="true">🛵</div>
+                    <div class="milestone-year">2018</div>
+                    <div class="milestone-title">Home Delivery</div>
+                    <p class="milestone-desc">Launched same-day doorstep delivery across Bundu — a first for the local
+                        area.</p>
+                </div>
+                <div class="milestone-item" role="listitem">
+                    <div class="milestone-dot" aria-hidden="true">🌐</div>
+                    <div class="milestone-year">2026</div>
+                    <div class="milestone-title">Online Store</div>
+                    <p class="milestone-desc">Launched full e-commerce with 200+ products, live cart & instant ordering.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="values-section" aria-label="Why shop with us">
+        <span class="section-eyebrow">Our Promise</span>
+        <h2>Why Choose Manish General Store?</h2>
+        <p class="section-intro">Every choice we make — from how we source to how we deliver — is guided by what's best
+            for you and your family.</p>
+
+        <div class="values-grid" role="list">
+            <article class="value-card" role="listitem">
+                <div class="value-icon-wrap" aria-hidden="true">🥬</div>
+                <h3>Freshly Sourced</h3>
+                <p>We handpick our inventory every morning, ensuring every product that reaches you is at peak
+                    freshness. No day-old produce, no compromises.</p>
+            </article>
+            <article class="value-card" role="listitem">
+                <div class="value-icon-wrap" aria-hidden="true">🤝</div>
+                <h3>Community First</h3>
+                <p>We are a proudly local business, woven into the fabric of Bundu. Our success is your success — and
+                    your neighbourhood's too.</p>
+            </article>
+            <article class="value-card" role="listitem">
+                <div class="value-icon-wrap" aria-hidden="true">₹</div>
+                <h3>Honest Pricing</h3>
+                <p>No hidden markups. We work directly with suppliers to give you the best possible prices on every item
+                    in our store, always.</p>
+            </article>
+            <article class="value-card" role="listitem">
+                <div class="value-icon-wrap" aria-hidden="true">🛵</div>
+                <h3>Dependable Delivery</h3>
+                <p>Order before evening and receive your groceries the same day. We show up — rain or shine — because
+                    your family depends on it.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="founder-section" aria-label="About the founders">
+        <div class="founder-inner">
+            <div class="founder-avatar-wrap" aria-hidden="true">
+                <div class="founder-avatar">👥</div>
+                <span class="founder-badge">Founder & Co-founder</span>
+            </div>
+            <div class="founder-text">
+                <div class="section-divider">
+                    <span class="section-eyebrow">The Family Behind the Store</span>
+                </div>
+                <h2>Founded by <span>Nandulal Gorai</span>,<br>Co-led by <span>Manish Gorai</span>.</h2>
+                <p>Nandulal Gorai started this store in 1998 with nothing more than a deep understanding of what his
+                    neighbours needed and an unshakeable belief that running an honest business was its own reward. He
+                    grew up in Bundu, and this store has always been personal to him — not just a livelihood, but a way
+                    of giving back.</p>
+                <p>Twenty-six years on, that philosophy still guides every decision. Today, his son Manish Gorai
+                    (co-founder) has joined the helm, bringing the family business into the digital age in 2026. The
+                    store has grown, but its values have not changed by a single rupee's worth.</p>
+                <div class="founder-signature">
+                    <div class="founder-sig-line" aria-hidden="true"></div>
+                    <div>
+                        <div class="founder-name">Nandulal Gorai & Manish Gorai</div>
+                        <div class="founder-role">Founder & Co-founder · Est. 1998</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-strip" aria-label="Shop now">
+        <h2>Ready to Order Fresh Today?</h2>
+        <p>Browse our 200+ products and get same-day delivery anywhere in Bundu. Fresh groceries, honest prices — at
+            your door.</p>
+        <div class="cta-buttons">
+            <a href="index.html" class="btn-primary">🛒 Shop Now</a>
+            <a href="contact.html" class="btn-outline">📞 Contact Us</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo-text">Manish General Store</div>
+                <p>Your trusted neighbourhood grocery store in Bundu, Ranchi since 1998.</p>
+            </div>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="cart.html">Cart</a>
+            </nav>
+            <div class="footer-right">
+                <p>📞 Call us anytime</p>
+                <p style="margin-top:6px; font-size:0.85rem; color:rgba(255,255,255,0.6);">Bundu, Ranchi, Jharkhand</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Manish General Store. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            /* ─────────────────────────────────────────────────────────
+               CART BADGE — manishCartState, .visible class pattern,
+               BFCache + cross-tab sync via storage & pageshow events.
+            ───────────────────────────────────────────────────────── */
+            let cart = {};
+            const badge = document.getElementById('cartBadge');
+
+            function loadCartAndUpdateBadge() {
+                try {
+                    cart = JSON.parse(localStorage.getItem('manishCartState')) || {};
+                } catch {
+                    cart = {};
+                }
+                const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+                if (badge) {
+                    badge.textContent = totalItems;
+                    totalItems > 0
+                        ? badge.classList.add('visible')
+                        : badge.classList.remove('visible');
+                }
+            }
+
+            // Initial load
+            loadCartAndUpdateBadge();
+            // Re-sync when user switches tabs
+            window.addEventListener('storage', loadCartAndUpdateBadge);
+            // Re-sync on BFCache restore (back/forward navigation)
+            window.addEventListener('pageshow', loadCartAndUpdateBadge);
+
+            /* ─────────────────────────────────────────────────────────
+               MOBILE HAMBURGER MENU
+            ───────────────────────────────────────────────────────── */
+            const menuToggle = document.getElementById('menuToggle');
+            const mainNav = document.getElementById('mainNav');
+
+            menuToggle.addEventListener('click', () => {
+                const isOpen = mainNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen);
+            });
+
+            // Close nav when any link is tapped (mobile UX)
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('open');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Contact Manish General Store — reach us for orders, queries, or support in Bundu, Ranchi.">
+    <title>Manish General Store | Contact Us</title>
+    <link rel="icon" type="image/png" href="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ── Design System (mirrors index.html + about.html exactly) ── */
+        :root {
+            --primary: #1a5c2a;
+            --primary-light: #2e7d3c;
+            --primary-hover: #134520;
+            --accent: #e8501a;
+            --accent-light: #ff6b35;
+            --bg: #f4f8f2;
+            --card-bg: #ffffff;
+            --text: #1c2b1e;
+            --text-muted: #6b7c6e;
+            --border: #d4e8ca;
+            --gold: #f5a623;
+            --speed: 0.3s;
+            --radius: 14px;
+            --shadow-card: 0 2px 16px rgba(26, 92, 42, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 16px 40px rgba(26, 92, 42, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
+            /* ── Copied from checkout.html ── */
+            --error: #d32f2f;
+            --error-bg: #fff5f5;
+            --success: #1a5c2a;
+            --input-focus-shadow: 0 0 0 3px rgba(46, 125, 60, 0.15);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(46, 125, 60, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(46, 125, 60, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ================================
+           HEADER
+        ================================ */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            height: 70px;
+            box-shadow: 0 4px 20px rgba(26, 92, 42, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+        }
+
+        .logo-sub {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-top: 1px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            transition: background var(--speed) ease, color var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .cart-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 0.45rem 1rem !important;
+            border-radius: 20px !important;
+            position: relative;
+        }
+
+        .cart-link:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+        }
+
+        .cart-icon {
+            font-size: 1rem;
+        }
+
+        .cart-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            transform: scale(0);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .cart-badge.visible {
+            transform: scale(1);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* ================================
+           PAGE HERO
+        ================================ */
+        .contact-hero {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 60%, var(--primary-light) 100%);
+            color: #fff;
+            text-align: center;
+            padding: 5rem 2rem 4.5rem;
+            overflow: hidden;
+        }
+
+        .contact-hero::before,
+        .contact-hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.07;
+            background: #fff;
+        }
+
+        .contact-hero::before {
+            width: 420px;
+            height: 420px;
+            top: -140px;
+            left: -100px;
+        }
+
+        .contact-hero::after {
+            width: 300px;
+            height: 300px;
+            bottom: -120px;
+            right: -60px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            margin-bottom: 1.4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-weight: 800;
+            line-height: 1.12;
+            margin-bottom: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-hero h1 em {
+            font-style: italic;
+            color: #a5d6a7;
+        }
+
+        .contact-hero p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.75;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ================================
+           MAIN CONTACT AREA
+        ================================ */
+        main {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            padding: 5rem 2rem;
+        }
+
+        .contact-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.55fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        /* ── Info Panel ── */
+        .contact-info {
+            background: linear-gradient(160deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: #fff;
+            padding: 2.8rem 2.4rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-hover);
+            position: sticky;
+            top: 90px;
+            overflow: hidden;
+        }
+
+        .contact-info::after {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            bottom: -80px;
+            right: -60px;
+            pointer-events: none;
+        }
+
+        .contact-info .section-eyebrow {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #a5d6a7;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .contact-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            line-height: 1.2;
+        }
+
+        .contact-info .panel-desc {
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.72);
+            line-height: 1.7;
+            margin-bottom: 2.2rem;
+        }
+
+        .info-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .info-icon {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .info-content strong {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #a5d6a7;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-content span {
+            font-size: 0.93rem;
+            color: rgba(255, 255, 255, 0.88);
+            line-height: 1.5;
+        }
+
+        .info-content a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Hours grid */
+        .hours-divider {
+            margin: 2.2rem 0 1.4rem;
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .hours-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #a5d6a7;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .hours-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem 1.2rem;
+        }
+
+        .hours-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+
+        .hours-row .day {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .hours-row .time {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        /* ── Form Panel ── */
+        .contact-form-panel {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 2.8rem 2.6rem;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border);
+            opacity: 0;
+            animation: cardIn 0.5s 0.1s ease forwards;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-eyebrow {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--primary-light);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-form-panel h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .form-desc {
+            font-size: 0.93rem;
+            color: var(--text-muted);
+            margin-bottom: 2.2rem;
+            line-height: 1.65;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.2px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.78rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.93rem;
+            color: var(--text);
+            background: var(--bg);
+            transition: border-color var(--speed) ease, box-shadow var(--speed) ease, background var(--speed) ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--primary-light);
+            box-shadow: var(--input-focus-shadow);
+            background: #fff;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 130px;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7c6e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        /* ── Copied from checkout.html: error / valid states ── */
+        .form-group input.error,
+        .form-group textarea.error,
+        .form-group select.error {
+            border-color: var(--error);
+            background: var(--error-bg);
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+
+        .form-group input.valid,
+        .form-group textarea.valid,
+        .form-group select.valid {
+            border-color: #4caf50;
+            background: #f9fff9;
+        }
+
+        /* ── Copied from checkout.html: field-error ── */
+        .field-error {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--error);
+            margin-top: 0.35rem;
+            padding-left: 0.25rem;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-error.visible {
+            display: flex;
+        }
+
+        .field-error::before {
+            content: '⚠';
+            font-size: 0.7rem;
+        }
+
+        /* ── Copied from checkout.html: valid-tick ── */
+        .valid-tick {
+            position: absolute;
+            right: 0.9rem;
+            bottom: 1.55rem;
+            /* aligned with single-line inputs */
+            font-size: 0.95rem;
+            color: #4caf50;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        /* For textarea, tick sits near top-right */
+        .form-group.is-textarea .valid-tick {
+            bottom: auto;
+            top: 2.6rem;
+        }
+
+        .form-group input.valid~.valid-tick,
+        .form-group textarea.valid~.valid-tick,
+        .form-group select.valid~.valid-tick {
+            opacity: 1;
+        }
+
+        .char-counter {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: -0.3rem;
+        }
+
+        .char-counter.warn {
+            color: var(--accent);
+        }
+
+        /* ── Submit button (base styles preserved) ── */
+        .submit-btn {
+            width: 100%;
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 16px rgba(26, 92, 42, 0.25);
+            letter-spacing: 0.2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 92, 42, 0.32);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ── Copied from checkout.html: btn-spinner & loading state ── */
+        .submit-btn .btn-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255, 255, 255, 0.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .submit-btn.loading .btn-spinner {
+            display: block;
+        }
+
+        .submit-btn.loading .btn-text {
+            opacity: 0.85;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Success state */
+        .form-success {
+            display: none;
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+
+        .form-success .success-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, rgba(26, 92, 42, 0.1), rgba(46, 125, 60, 0.06));
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.4rem;
+        }
+
+        .form-success h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.6rem;
+        }
+
+        .form-success p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-width: 340px;
+            margin: 0 auto 1.8rem;
+        }
+
+        .reset-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 0.6rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ================================
+           ERROR TOAST NOTIFICATION
+           Slides in from the top of the form panel to surface server-side
+           or network errors without disrupting the form layout.
+        ================================ */
+        .error-toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            background: var(--error-bg);
+            border: 1.5px solid var(--error);
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+            margin-bottom: 1.4rem;
+            /* Hidden by default — JS toggles .visible */
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.3s ease, max-height 0.35s ease, margin-bottom 0.35s ease;
+            pointer-events: none;
+        }
+
+        .error-toast.visible {
+            opacity: 1;
+            max-height: 160px;
+            pointer-events: auto;
+        }
+
+        .error-toast:not(.visible) {
+            margin-bottom: 0;
+        }
+
+        .error-toast-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .error-toast-body {
+            flex: 1;
+        }
+
+        .error-toast-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--error);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .error-toast-message {
+            font-size: 0.82rem;
+            color: var(--error);
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+
+        .error-toast-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--error);
+            font-size: 1rem;
+            opacity: 0.6;
+            padding: 0;
+            line-height: 1;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+        }
+
+        .error-toast-close:hover {
+            opacity: 1;
+        }
+
+        /* ================================
+           MAP SECTION
+        ================================ */
+        .map-section {
+            position: relative;
+            z-index: 1;
+            padding: 0 2rem 5rem;
+        }
+
+        .map-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .map-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .map-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .map-header p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .map-embed {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, #e8f4e0 0%, #d4e8ca 100%);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            color: var(--primary);
+            font-size: 0.93rem;
+            font-weight: 500;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .map-embed .map-pin {
+            font-size: 2.5rem;
+        }
+
+        .map-embed .map-address {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            max-width: 300px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .map-embed .directions-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.55rem 1.2rem;
+            border-radius: 20px;
+            margin-top: 0.3rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .map-embed .directions-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(26, 92, 42, 0.28);
+        }
+
+        /* ================================
+           FOOTER
+        ================================ */
+        footer {
+            background: var(--primary-hover);
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .footer-brand .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.83rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+            max-width: 220px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .footer-right {
+            text-align: right;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-right a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            padding: 1rem 2rem;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================ */
+        @media (max-width: 860px) {
+            .contact-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 1.25rem;
+                height: 62px;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .logo-sub {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav {
+                display: none;
+                position: absolute;
+                top: 62px;
+                left: 0;
+                right: 0;
+                background: var(--primary-hover);
+                flex-direction: column;
+                gap: 0;
+                padding: 0.5rem 0 1rem;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            nav.open {
+                display: flex;
+            }
+
+            nav a {
+                padding: 0.75rem 1.5rem;
+                border-radius: 0;
+                font-size: 1rem;
+                width: 100%;
+            }
+
+            .cart-link {
+                border-radius: 0 !important;
+                padding: 0.75rem 1.5rem !important;
+                background: rgba(255, 255, 255, 0.08);
+                border: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .contact-hero {
+                padding: 3.5rem 1.5rem 3rem;
+            }
+
+            main {
+                padding: 3rem 1.25rem;
+            }
+
+            .contact-form-panel {
+                padding: 2rem 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                text-align: center;
+            }
+
+            .footer-brand p {
+                max-width: 100%;
+            }
+
+            .footer-right {
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <a href="index.html" class="logo" aria-label="Manish General Store Home">
+            <img src="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3"
+                alt="Manish General Store Logo" class="logo-icon" loading="lazy" onerror="this.style.display='none'">
+            <div>
+                <span class="logo-text">Manish General Store</span>
+                <span class="logo-sub">Bundu, Ranchi</span>
+            </div>
+        </a>
+
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav id="mainNav" role="navigation" aria-label="Main navigation">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="active" aria-current="page">Contact</a>
+            <a href="cart.html" class="cart-link" aria-label="Cart">
+                <span class="cart-icon">🛒</span>
+                Cart
+                <span class="cart-badge" id="cartBadge" aria-live="polite">0</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="contact-hero" aria-label="Contact hero">
+        <div class="hero-tag">📬 We're Always Here</div>
+        <h1>Get in <em>Touch</em></h1>
+        <p>For orders, queries, or just to say hello — we'd love to hear from you.</p>
+    </section>
+
+    <!-- ===== CONTACT CONTENT ===== -->
+    <main>
+        <div class="contact-wrapper">
+
+            <!-- Info Panel -->
+            <aside class="contact-info" aria-label="Contact information">
+                <span class="section-eyebrow">Find Us</span>
+                <h3>Contact Information</h3>
+                <p class="panel-desc">Fill out the form and we'll get back to you within 24 hours. Or reach us directly.
+                </p>
+
+                <div class="info-items">
+                    <div class="info-item">
+                        <div class="info-icon">📞</div>
+                        <div class="info-content">
+                            <strong>Phone</strong>
+                            <span><a href="tel:+916204072481">+91 6204072481</a></span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">✉️</div>
+                        <div class="info-content">
+                            <strong>Email</strong>
+                            <span>manishgeneralstorebundu@gmail.com</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div class="info-content">
+                            <strong>Address</strong>
+                            <span>Purana Bazar Toli, Bundu,<br>Ranchi, Jharkhand — 835204</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="hours-divider">
+                <span class="hours-label">Store Hours</span>
+                <div class="hours-grid">
+                    <div class="hours-row"><span class="day">Mon – Fri</span><span class="time">7am – 9pm</span></div>
+                    <div class="hours-row"><span class="day">Saturday</span><span class="time">7am – 9pm</span></div>
+                    <div class="hours-row"><span class="day">Sunday</span><span class="time">8am – 7pm</span></div>
+                    <div class="hours-row"><span class="day">Holidays</span><span class="time">9am – 6pm</span></div>
+                </div>
+            </aside>
+
+            <!-- Form Panel -->
+            <div class="contact-form-panel">
+                <span class="section-eyebrow">Send a Message</span>
+                <h2>How can we help?</h2>
+                <p class="form-desc">Whether it's an order query or feedback, we read every message personally.</p>
+
+                <form id="contactForm" novalidate>
+
+                    <!-- ── Error Toast ─────────────────────────────────────
+                         Rendered above the first field. Hidden by default.
+                         showErrorToast() / hideErrorToast() in JS control it.
+                    ───────────────────────────────────────────────────── -->
+                    <div class="error-toast" id="errorToast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <span class="error-toast-icon" aria-hidden="true">⚠️</span>
+                        <div class="error-toast-body">
+                            <strong class="error-toast-title" id="errorToastTitle">Something went wrong</strong>
+                            <span class="error-toast-message" id="errorToastMessage"></span>
+                        </div>
+                        <button type="button" class="error-toast-close" id="errorToastClose"
+                            aria-label="Dismiss error">✕</button>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Full Name -->
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" placeholder="Your name" autocomplete="name"
+                                oninput="validateFullName()" onblur="validateFullName(true)"
+                                aria-describedby="errFullName">
+                            <span class="valid-tick" aria-hidden="true">✓</span>
+                            <span class="field-error" id="errFullName" role="alert"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" autocomplete="tel"
+                                maxlength="10" inputmode="numeric" oninput="validatePhone()"
+                                onblur="validatePhone(true)" aria-describedby="errPhone">
+                            <span class="valid-tick" aria-hidden="true">✓</span>
+                            <span class="field-error" id="errPhone" role="alert"></span>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email"
+                            oninput="validateEmail()" onblur="validateEmail(true)" aria-describedby="errEmail">
+                        <span class="valid-tick" aria-hidden="true">✓</span>
+                        <span class="field-error" id="errEmail" role="alert"></span>
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <select id="subject" name="subject" onchange="validateSubject()" onblur="validateSubject(true)"
+                            aria-describedby="errSubject">
+                            <option value="" disabled selected>Select a topic…</option>
+                            <option value="order">Order Enquiry</option>
+                            <option value="delivery">Delivery Issue</option>
+                            <option value="product">Product Availability</option>
+                            <option value="feedback">Feedback / Suggestion</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <span class="valid-tick" aria-hidden="true">✓</span>
+                        <span class="field-error" id="errSubject" role="alert"></span>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="form-group is-textarea">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Describe your query in detail…"
+                            maxlength="500" oninput="validateMessage(); updateCharCounter()"
+                            onblur="validateMessage(true)" aria-describedby="errMessage"></textarea>
+                        <span class="valid-tick" aria-hidden="true">✓</span>
+                        <span class="char-counter" id="charCounter">0 / 500</span>
+                        <span class="field-error" id="errMessage" role="alert"></span>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn" disabled aria-label="Send message">
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                        <span class="btn-text">Send Message ✉️</span>
+                    </button>
+                </form>
+
+                <!-- Success state (shown after submit) -->
+                <div class="form-success" id="formSuccess" aria-live="polite">
+                    <div class="success-icon">✅</div>
+                    <h3>Message Sent!</h3>
+                    <p>Thanks for reaching out. We'll get back to you within 24 hours.</p>
+                    <button class="reset-btn" id="resetBtn">← Send another message</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===== MAP ===== -->
+    <section class="map-section" aria-label="Store location">
+        <div class="map-inner">
+            <div class="map-header">
+                <span class="section-eyebrow">📍 Location</span>
+                <h2>Find Us in Bundu</h2>
+                <p>Right in the heart of Purana Bazar Toli, easy to find.</p>
+            </div>
+            <div class="map-embed" role="img" aria-label="Map showing store location in Bundu, Ranchi">
+                <span class="map-pin">🗺️</span>
+                <strong>Manish General Store</strong>
+                <p class="map-address">Purana Bazar Toli, Bundu, Ranchi, Jharkhand — 835204</p>
+                <a href="https://maps.app.goo.gl/QbWYe8PonEmVGqLk9" target="_blank" rel="noopener noreferrer"
+                    class="directions-link" aria-label="Open directions in Google Maps">
+                    🧭 Get Directions
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo-text">Manish General Store</div>
+                <p>Your trusted neighbourhood grocery store in Bundu, Ranchi since 1998.</p>
+            </div>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="cart.html">Cart</a>
+            </nav>
+            <div class="footer-right">
+                <p>📞 Call us anytime</p>
+                <p style="margin-top:6px; font-size:0.85rem;"><a href="tel:+919110131095">+91 91101 31095</a></p>
+                <p style="margin-top:4px; font-size:0.8rem; color:rgba(255,255,255,0.6);">Bundu, Ranchi, Jharkhand</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Manish General Store. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================================
+         JAVASCRIPT
+    ================================ -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            /* ─────────────────────────────────────────────────────────
+               CART BADGE (with BFCache & Tab Syncing)
+            ───────────────────────────────────────────────────────── */
+            let cart = {};
+            const badge = document.getElementById('cartBadge');
+
+            function loadCartAndUpdateBadge() {
+                try {
+                    cart = JSON.parse(localStorage.getItem('manishCartState')) || {};
+                } catch {
+                    cart = {};
+                }
+                const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+                if (badge) {
+                    badge.textContent = totalItems;
+                    totalItems > 0
+                        ? badge.classList.add('visible')
+                        : badge.classList.remove('visible');
+                }
+            }
+
+            loadCartAndUpdateBadge();
+            window.addEventListener('storage', loadCartAndUpdateBadge);
+            window.addEventListener('pageshow', loadCartAndUpdateBadge);
+
+            /* ─────────────────────────────────────────────────────────
+               MOBILE HAMBURGER
+            ───────────────────────────────────────────────────────── */
+            const menuToggle = document.getElementById('menuToggle');
+            const mainNav = document.getElementById('mainNav');
+
+            menuToggle.addEventListener('click', () => {
+                const isOpen = mainNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen);
+            });
+
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('open');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            /* ─────────────────────────────────────────────────────────
+               CHARACTER COUNTER
+            ───────────────────────────────────────────────────────── */
+            window.updateCharCounter = function () {
+                const textarea = document.getElementById('message');
+                const counter = document.getElementById('charCounter');
+                const len = textarea.value.length;
+                counter.textContent = `${len} / 500`;
+                counter.classList.toggle('warn', len > 420);
+            };
+
+            /* ─────────────────────────────────────────────────────────
+               VALIDATION HELPERS
+               Mirrors checkout.html's setFieldState / clearFieldState
+               pattern exactly — same logic, same CSS classes.
+            ───────────────────────────────────────────────────────── */
+            function setFieldState(inputEl, errorEl, isValid, errorMsg) {
+                if (isValid) {
+                    inputEl.classList.remove('error');
+                    inputEl.classList.add('valid');
+                    if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('visible'); }
+                } else {
+                    inputEl.classList.remove('valid');
+                    inputEl.classList.add('error');
+                    if (errorEl) { errorEl.textContent = errorMsg; errorEl.classList.add('visible'); }
+                }
+            }
+
+            function clearFieldState(inputEl, errorEl) {
+                inputEl.classList.remove('error', 'valid');
+                if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('visible'); }
+            }
+
+            /* ─────────────────────────────────────────────────────────
+               FIELD VALIDATORS
+               Each validator is exposed on `window` so the inline
+               oninput / onblur attributes can call them directly.
+               blurMode = true → always show the error (even empty).
+               blurMode = false → only show error if field was already
+                                  in an error state (non-intrusive UX).
+            ───────────────────────────────────────────────────────── */
+
+            // ── Full Name ──────────────────────────────────────────
+            window.validateFullName = function (blurMode = false) {
+                const el = document.getElementById('fullName');
+                const errEl = document.getElementById('errFullName');
+                const val = el.value.trim();
+                if (!val && !blurMode && !el.classList.contains('error')) {
+                    clearFieldState(el, errEl); checkFormValidity(); return;
+                }
+                if (!val)
+                    setFieldState(el, errEl, false, 'Full name is required.');
+                else if (val.length < 3)
+                    setFieldState(el, errEl, false, 'Name must be at least 3 characters.');
+                else if (!/^[a-zA-Z\s'.]+$/.test(val))
+                    setFieldState(el, errEl, false, 'Name can only contain letters and spaces.');
+                else
+                    setFieldState(el, errEl, true, '');
+                checkFormValidity();
+            };
+
+            // ── Phone ──────────────────────────────────────────────
+            window.validatePhone = function (blurMode = false) {
+                const el = document.getElementById('phone');
+                const errEl = document.getElementById('errPhone');
+                // Strip non-digits as user types
+                el.value = el.value.replace(/\D/g, '').slice(0, 10);
+                const val = el.value;
+                if (!val && !blurMode && !el.classList.contains('error')) {
+                    clearFieldState(el, errEl); checkFormValidity(); return;
+                }
+                if (!val)
+                    setFieldState(el, errEl, false, 'Phone number is required.');
+                else if (val.length !== 10)
+                    setFieldState(el, errEl, false, 'Must be exactly 10 digits.');
+                else if (!/^[6-9]/.test(val))
+                    setFieldState(el, errEl, false, 'Indian numbers start with 6, 7, 8 or 9.');
+                else
+                    setFieldState(el, errEl, true, '');
+                checkFormValidity();
+            };
+
+            // ── Email ──────────────────────────────────────────────
+            window.validateEmail = function (blurMode = false) {
+                const el = document.getElementById('email');
+                const errEl = document.getElementById('errEmail');
+                const val = el.value.trim();
+                if (!val && !blurMode && !el.classList.contains('error')) {
+                    clearFieldState(el, errEl); checkFormValidity(); return;
+                }
+                const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+                if (!val)
+                    setFieldState(el, errEl, false, 'Email address is required.');
+                else if (!emailRe.test(val))
+                    setFieldState(el, errEl, false, 'Enter a valid email (e.g. name@example.com).');
+                else
+                    setFieldState(el, errEl, true, '');
+                checkFormValidity();
+            };
+
+            // ── Subject ────────────────────────────────────────────
+            window.validateSubject = function (blurMode = false) {
+                const el = document.getElementById('subject');
+                const errEl = document.getElementById('errSubject');
+                const val = el.value;
+                if (!val && !blurMode && !el.classList.contains('error')) {
+                    clearFieldState(el, errEl); checkFormValidity(); return;
+                }
+                if (!val)
+                    setFieldState(el, errEl, false, 'Please select a subject.');
+                else
+                    setFieldState(el, errEl, true, '');
+                checkFormValidity();
+            };
+
+            // ── Message ────────────────────────────────────────────
+            window.validateMessage = function (blurMode = false) {
+                const el = document.getElementById('message');
+                const errEl = document.getElementById('errMessage');
+                const val = el.value.trim();
+                if (!val && !blurMode && !el.classList.contains('error')) {
+                    clearFieldState(el, errEl); checkFormValidity(); return;
+                }
+                if (!val)
+                    setFieldState(el, errEl, false, 'Message is required.');
+                else if (val.length < 10)
+                    setFieldState(el, errEl, false, 'Please write at least 10 characters.');
+                else
+                    setFieldState(el, errEl, true, '');
+                checkFormValidity();
+            };
+
+            /* ─────────────────────────────────────────────────────────
+               FORM VALIDITY GATE
+               Enables/disables the Send Message button based on whether
+               every required field carries the "valid" class.
+            ───────────────────────────────────────────────────────── */
+            function isFormValid() {
+                return (
+                    document.getElementById('fullName').classList.contains('valid') &&
+                    document.getElementById('phone').classList.contains('valid') &&
+                    document.getElementById('email').classList.contains('valid') &&
+                    document.getElementById('subject').classList.contains('valid') &&
+                    document.getElementById('message').classList.contains('valid')
+                );
+            }
+
+            function checkFormValidity() {
+                document.getElementById('submitBtn').disabled = !isFormValid();
+            }
+
+            /* ─────────────────────────────────────────────────────────
+               ERROR TOAST HELPERS
+               showErrorToast(title, message) — renders the inline error
+               banner at the top of the form with an animated slide-in.
+               hideErrorToast()               — collapses it.
+            ───────────────────────────────────────────────────────── */
+            const errorToast        = document.getElementById('errorToast');
+            const errorToastTitle   = document.getElementById('errorToastTitle');
+            const errorToastMessage = document.getElementById('errorToastMessage');
+            const errorToastClose   = document.getElementById('errorToastClose');
+
+            function showErrorToast(title, message) {
+                errorToastTitle.textContent   = title;
+                errorToastMessage.textContent = message;
+                errorToast.classList.add('visible');
+                // Scroll the toast into view so it's visible on mobile
+                errorToast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function hideErrorToast() {
+                errorToast.classList.remove('visible');
+            }
+
+            // Allow the user to manually dismiss the toast
+            errorToastClose.addEventListener('click', hideErrorToast);
+
+            /* ─────────────────────────────────────────────────────────
+               BUTTON STATE HELPERS
+               resetButtonState() — restores the submit button to its
+               active, clickable state after a failed submission so the
+               user can correct errors and try again.
+            ───────────────────────────────────────────────────────── */
+            function setButtonLoading(submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+                submitBtn.querySelector('.btn-text').textContent = 'Sending…';
+            }
+
+            function resetButtonState(submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.querySelector('.btn-text').textContent = 'Send Message ✉️';
+            }
+
+            /* ─────────────────────────────────────────────────────────
+               ASYNC FORM SUBMISSION  (Phase 10 — real backend)
+               ─────────────────────────────────────────────────────────
+               Flow:
+                 1. Collect and log the payload.
+                 2. Hide any previous error toast.
+                 3. Lock the button and show the spinner.
+                 4. POST to the Express API with JSON.stringify().
+                 5a. response.ok (2xx)  → hide form, reveal success state.
+                 5b. !response.ok (4xx/5xx) → parse the JSON error body
+                     returned by server.js's structured error handler and
+                     surface it in the error toast; reset button so the
+                     user can fix the problem and resubmit.
+                 5c. Network failure (TypeError: Failed to fetch, etc.)
+                     → catch block fires, show a "Could not reach the
+                     server" message; reset button.
+
+               The try/catch wraps the ENTIRE fetch pipeline — including
+               the await response.json() call — so a malformed server
+               response (e.g. a non-JSON 502 from a proxy) is also caught
+               gracefully instead of throwing an uncaught promise rejection.
+            ───────────────────────────────────────────────────────── */
+            const CONTACT_API_URL = 'http://localhost:5000/api/v1/contact';
+
+            async function handleContactSubmit(event) {
+                event.preventDefault();
+
+                // Final guard — button should already be disabled if the
+                // form is invalid, but this is a belt-and-suspenders check.
+                if (!isFormValid()) return;
+
+                // ── Step 1: Build the structured payload ───────────────
+                // We send the four fields the backend's validateContactPayload()
+                // requires: fullName, email, subject, message.
+                // phone and submittedAt are included as bonus metadata; the
+                // server ignores unknown fields gracefully.
+                const contactPayload = {
+                    fullName:    document.getElementById('fullName').value.trim(),
+                    phone:       document.getElementById('phone').value.trim(),
+                    email:       document.getElementById('email').value.trim(),
+                    subject:     document.getElementById('subject').value,
+                    message:     document.getElementById('message').value.trim(),
+                    submittedAt: new Date().toISOString(),
+                };
+
+                // Log the outgoing payload to the browser console for
+                // development visibility (safe to leave in; no secrets here).
+                console.log('[Contact Form] Submitting payload to', CONTACT_API_URL, contactPayload);
+
+                // ── Step 2: Reset any previous error state ─────────────
+                hideErrorToast();
+
+                // ── Step 3: Lock the button and show the loading spinner ─
+                const submitBtn = document.getElementById('submitBtn');
+                setButtonLoading(submitBtn);
+
+                // ── Step 4 & 5: Fetch with full error handling ─────────
+                try {
+                    // ── 4. Send the POST request ───────────────────────
+                    // window.fetch() is native in all modern browsers.
+                    // Content-Type MUST be 'application/json' so Express's
+                    // express.json() middleware parses the body correctly.
+                    const response = await window.fetch(CONTACT_API_URL, {
+                        method:  'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(contactPayload),
+                    });
+
+                    // ── 5a. Happy path: 2xx status ─────────────────────
+                    if (response.ok) {
+                        // Log the success response for debugging transparency
+                        const successData = await response.json();
+                        console.log('[Contact Form] Server response (201):', successData);
+
+                        // Transition UI: hide form → reveal success banner.
+                        // We do NOT reset the button here because the form
+                        // itself is hidden — the resetBtn handles re-entry.
+                        document.getElementById('contactForm').style.display = 'none';
+                        submitBtn.classList.remove('loading');
+                        document.getElementById('formSuccess').style.display = 'block';
+                        return; // Stop execution; everything succeeded.
+                    }
+
+                    // ── 5b. Server-side error: 400, 422, 500, etc. ─────
+                    // response.ok is false for any status outside 200–299.
+                    // Our Express server always returns a structured JSON
+                    // error body (see the global error handler in server.js),
+                    // so we attempt to read it for a descriptive message.
+                    let serverTitle   = `Server Error (${response.status})`;
+                    let serverMessage = 'The server rejected the request. Please try again.';
+
+                    try {
+                        // Inner try/catch: if the error body isn't valid JSON
+                        // (e.g. a raw HTML 502 from a proxy), we fall back to
+                        // the defaults set above instead of throwing.
+                        const errorData = await response.json();
+
+                        // The Express error handler returns { message, errors[] }
+                        if (errorData.message) {
+                            serverMessage = errorData.message;
+                        }
+                        // If it's a 400 validation error, append the field list
+                        if (Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+                            serverMessage += ' — ' + errorData.errors.join(' ');
+                        }
+                        if (response.status === 400) {
+                            serverTitle = 'Validation Error';
+                        }
+                    } catch (_parseError) {
+                        // The server returned a non-JSON body; use the defaults.
+                        console.warn('[Contact Form] Could not parse error response body.');
+                    }
+
+                    console.error('[Contact Form] Server error:', response.status, serverMessage);
+                    showErrorToast(serverTitle, serverMessage);
+
+                    // Restore the button so the user can fix the problem and retry.
+                    resetButtonState(submitBtn);
+
+                } catch (networkError) {
+                    // ── 5c. Network failure ────────────────────────────
+                    // This block fires when the browser cannot reach the server
+                    // at all: Docker container is stopped, wrong port, CORS
+                    // pre-flight blocked, or the device is offline.
+                    // The error is typically a TypeError: "Failed to fetch".
+                    console.error('[Contact Form] Network error:', networkError);
+
+                    showErrorToast(
+                        'Network Error',
+                        'Could not reach the server. Please check your connection or try again shortly.'
+                    );
+
+                    // Restore button so the user can retry without refreshing.
+                    resetButtonState(submitBtn);
+                }
+            }
+
+            // Attach the async handler to the form's submit event
+            document.getElementById('contactForm').addEventListener('submit', handleContactSubmit);
+
+            /* ─────────────────────────────────────────────────────────
+               RESET — "Send another message" button
+            ───────────────────────────────────────────────────────── */
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                const form = document.getElementById('contactForm');
+                const submitBtn = document.getElementById('submitBtn');
+
+                // Reset all field values
+                form.reset();
+
+                // Clear all validation states
+                ['fullName', 'phone', 'email', 'subject', 'message'].forEach(id => {
+                    const el = document.getElementById(id);
+                    const errEl = document.getElementById('err' + id.charAt(0).toUpperCase() + id.slice(1));
+                    clearFieldState(el, errEl);
+                });
+
+                // Reset character counter
+                document.getElementById('charCounter').textContent = '0 / 500';
+                document.getElementById('charCounter').classList.remove('warn');
+
+                // Restore button to disabled (no fields valid yet)
+                submitBtn.disabled = true;
+                submitBtn.querySelector('.btn-text').textContent = 'Send Message ✉️';
+
+                // Swap success → form
+                document.getElementById('formSuccess').style.display = 'none';
+                form.style.display = '';
+            });
+
+        }); // DOMContentLoaded
+    </script>
+
+</body>
+
+</html>

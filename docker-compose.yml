@@ -1,0 +1,198 @@
+# =============================================================================
+# docker-compose.yml — Manish General Store API
+# Orchestrates the development environment using Docker Compose v3.9
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ── api service ─────────────────────────────────────────────────────────────
+  # The Express/Node.js application. Additional services (e.g. a Redis cache
+  # or an Nginx reverse proxy) can be appended here later as the project grows.
+  api:
+
+    # ── Build configuration ────────────────────────────────────────────────────
+    # "context: ." tells Docker Compose to use the current directory as the
+    # build context — i.e., it will look for the Dockerfile here.
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # ── Container name ─────────────────────────────────────────────────────────
+    # Gives the running container a predictable name instead of the default
+    # auto-generated one, making it easier to reference with "docker logs",
+    # "docker exec", etc.
+    container_name: manish_store_api
+
+    # ── Service dependency ─────────────────────────────────────────────────────
+    # Instructs Compose to start the `db` service before this one.
+    # condition: service_healthy goes further than the default "service_started":
+    # it waits until Postgres has passed its healthcheck (i.e. it is genuinely
+    # ready to accept connections) before Node.js boots. Without this, the api
+    # container can start, attempt a DB connection, find nothing listening yet,
+    # and crash — even though the db container technically "started".
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # ── Port mapping ───────────────────────────────────────────────────────────
+    # Format: "HOST_PORT:CONTAINER_PORT"
+    # Requests to localhost:5000 on your machine are forwarded to port 5000
+    # inside the container where Express is listening.
+    ports:
+      - "5000:5000"
+
+    # ── Volume mounts ──────────────────────────────────────────────────────────
+    volumes:
+      # 1. BIND MOUNT — Local source directory ↔ container workspace.
+      #    Any file you edit on your host machine is immediately visible inside
+      #    the running container. Combined with nodemon, this means the server
+      #    auto-restarts on every save without requiring a Docker rebuild.
+      #    Format: "HOST_PATH:CONTAINER_PATH"
+      - .:/usr/src/app
+
+      # 2. ANONYMOUS VOLUME — Protect node_modules inside the container.
+      #    Without this second entry, the bind mount above would OVERWRITE the
+      #    container's node_modules with whatever (possibly empty, or
+      #    OS-mismatched) node_modules folder exists on your host machine.
+      #    By declaring an anonymous volume at this specific path, Docker uses
+      #    the container's own node_modules and ignores the host folder entirely.
+      - /usr/src/app/node_modules
+
+    # ── Environment variables ──────────────────────────────────────────────────
+    # These key=value pairs are injected into the container's environment at
+    # runtime and are accessible via process.env inside Node.js.
+    environment:
+      - NODE_ENV=development
+      # ── Database connection ─────────────────────────────────────────────────
+      # These values MUST mirror the POSTGRES_* variables defined on the db
+      # service below. Docker's internal DNS resolves the service name "db" to
+      # the Postgres container's IP, so the host is simply "db" — not
+      # "localhost" (which would refer to the api container itself).
+      # The full connection string is also provided as a convenience for ORMs
+      # and query builders (pg, Knex, Prisma, TypeORM, Sequelize) that accept
+      # a single DATABASE_URL instead of individual host/user/pass values.
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=manish_store
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/manish_store
+      # Tip: In production, move all secrets to an .env file and reference it
+      # with "env_file: - .env" instead of hard-coding values here.
+
+    # ── Restart policy ─────────────────────────────────────────────────────────
+    # "unless-stopped" means the container will automatically restart after a
+    # crash or after the Docker daemon restarts — but NOT if you explicitly
+    # stop it with "docker compose down" or "docker stop".
+    restart: unless-stopped
+
+    # ── Logging configuration ──────────────────────────────────────────────────
+    # Caps log file size so a long-running development session doesn't silently
+    # fill up your disk with container log output.
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ── db service ──────────────────────────────────────────────────────────────
+  # Official PostgreSQL 15 on Alpine Linux (~80 MB vs ~380 MB for the full
+  # Debian image). This service owns all persistent relational data for the
+  # Manish General Store backend.
+  db:
+
+    # ── Image ──────────────────────────────────────────────────────────────────
+    # Pinning to a specific major version (15) prevents an automatic upgrade
+    # to a future major version (e.g. 16, 17) from silently breaking the data
+    # directory format — Postgres major versions are NOT wire-compatible on
+    # disk without a migration step (pg_upgrade).
+    image: postgres:15-alpine
+
+    # ── Container name ─────────────────────────────────────────────────────────
+    container_name: manish_store_db
+
+    # ── Port mapping ───────────────────────────────────────────────────────────
+    # Exposes Postgres on localhost:5432 of your host machine so you can
+    # connect from a GUI client (DBeaver, TablePlus, pgAdmin) or the psql CLI
+    # during development without needing to exec into the container.
+    # In production, remove this mapping — the api container talks to db over
+    # Docker's internal network and there is no reason to expose the DB port
+    # to the outside world.
+    ports:
+      - "5432:5432"
+
+    # ── Environment variables ──────────────────────────────────────────────────
+    # The official postgres image reads these on first boot to initialise the
+    # database cluster. If the postgres_data volume already contains data,
+    # these are ignored (the cluster already exists).
+    #
+    # POSTGRES_USER     — superuser account name
+    # POSTGRES_PASSWORD — superuser password  ⚠️ change before going to prod
+    # POSTGRES_DB       — name of the default database created on first boot
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=manish_store
+
+    # ── Named volume mount ─────────────────────────────────────────────────────
+    # Maps the named volume "postgres_data" to Postgres's default data
+    # directory. Docker manages this volume on the host filesystem
+    # (usually under /var/lib/docker/volumes/).
+    #
+    # Why a named volume instead of a bind mount?
+    #   - Bind mount: host path ↔ container path (good for source code you want
+    #     to edit from your IDE).
+    #   - Named volume: Docker-managed opaque storage (correct for database
+    #     files — you never need to browse them with your editor, and Docker
+    #     can optimise I/O, permissions, and portability for you).
+    #
+    # The data survives:  docker compose stop / start  and  docker compose down
+    # The data is lost:   docker compose down --volumes  (nuclear reset)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    # ── Health check ───────────────────────────────────────────────────────────
+    # Polls pg_isready every 5 seconds. The api service's depends_on block
+    # (condition: service_healthy) blocks Node.js from starting until this
+    # check reports healthy — preventing "ECONNREFUSED" boot-race errors.
+    #
+    # interval:     how often to run the probe
+    # timeout:      how long a single probe may take before it is marked failed
+    # retries:      how many consecutive failures before the container is
+    #               considered unhealthy
+    # start_period: grace period during which failures don't count against
+    #               the retry budget (gives Postgres time to initialise on
+    #               first boot when it needs to create the data directory)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d manish_store"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+    # ── Restart policy ─────────────────────────────────────────────────────────
+    restart: unless-stopped
+
+    # ── Logging configuration ──────────────────────────────────────────────────
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# =============================================================================
+# Named Volumes
+# =============================================================================
+# Volumes declared here at the top level are managed by Docker and persist
+# across container restarts and recreations.
+#
+# To inspect:  docker volume inspect manish_store_postgres_data
+# To reset DB: docker compose down --volumes   (⚠️ destroys ALL data)
+# =============================================================================
+volumes:
+  postgres_data:
+    # No extra options needed — Docker creates and manages this automatically.
+    # Adding a driver_opts block here is only needed for NFS or cloud storage
+    # backends in production Swarm / Kubernetes deployments.

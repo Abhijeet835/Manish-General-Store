@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manish General Store - Order groceries anytime, anywhere in Bundu, Ranchi.">
+    <title>Manish General Store | Home</title>
+    <link rel="icon" type="image/png"
+        href="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* --- Design System --- */
+        :root {
+            --primary: #1a5c2a;
+            --primary-light: #2e7d3c;
+            --primary-hover: #134520;
+            --accent: #e8501a;
+            --accent-light: #ff6b35;
+            --bg: #f4f8f2;
+            --bg-pattern: #eaf2e5;
+            --card-bg: #ffffff;
+            --text: #1c2b1e;
+            --text-muted: #6b7c6e;
+            --border: #d4e8ca;
+            --gold: #f5a623;
+            --speed: 0.3s;
+            --radius: 14px;
+            --shadow-card: 0 2px 16px rgba(26, 92, 42, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 16px 40px rgba(26, 92, 42, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Subtle leaf/dot pattern on body */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(46, 125, 60, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(46, 125, 60, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ================================
+           HEADER
+        ================================ */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            height: 70px;
+            box-shadow: 0 4px 20px rgba(26, 92, 42, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+        }
+
+        .logo-sub {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-top: 1px;
+        }
+
+        /* Nav */
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            transition: background var(--speed) ease, color var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        /* Cart link */
+        .cart-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 0.45rem 1rem !important;
+            border-radius: 20px !important;
+            position: relative;
+        }
+
+        .cart-link:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+        }
+
+        .cart-icon {
+            font-size: 1rem;
+        }
+
+        .cart-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            transform: scale(0);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .cart-badge.visible {
+            transform: scale(1);
+        }
+
+        /* Hamburger menu toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* ================================
+           HERO SECTION
+        ================================ */
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 4.5rem 2rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(26, 92, 42, 0.08);
+            border: 1px solid rgba(26, 92, 42, 0.15);
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            line-height: 1.15;
+            max-width: 700px;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 520px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        /* Stats strip */
+        .stats-strip {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .stat-num {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ================================
+           MAIN / PRODUCT GRID
+        ================================ */
+        main {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            padding: 0 2rem 5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .section-title span {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .view-all {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: gap 0.2s ease;
+        }
+
+        .view-all:hover {
+            gap: 8px;
+        }
+
+        /* Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.75rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ================================
+           PRODUCT CARD
+        ================================ */
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow-card);
+            transition: transform var(--speed) ease, box-shadow var(--speed) ease;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            animation: cardIn 0.5s ease forwards;
+        }
+
+        .product-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .product-card:nth-child(2) {
+            animation-delay: 0.12s;
+        }
+
+        .product-card:nth-child(3) {
+            animation-delay: 0.19s;
+        }
+
+        .product-card:nth-child(4) {
+            animation-delay: 0.26s;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-card:hover {
+            transform: translateY(-7px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Badge */
+        .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.28rem 0.75rem;
+            border-radius: 20px;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-new {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .badge-fresh {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .badge-best {
+            background: var(--gold);
+            color: #1c2b1e;
+        }
+
+        /* Image */
+        .product-image-container {
+            display: block;
+            width: 100%;
+            height: 195px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f0f7ec 0%, #e8f4e0 100%);
+            flex-shrink: 0;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.55s ease;
+        }
+
+        .product-card img[src=''],
+        .product-card img:not([src]) {
+            opacity: 0;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.07);
+        }
+
+        /* Product Info */
+        .product-info {
+            padding: 1.25rem 1.25rem 1.35rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .product-info h3 {
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.2rem;
+            transition: color 0.2s;
+            line-height: 1.3;
+        }
+
+        .product-link:hover h3 {
+            color: var(--primary-light);
+        }
+
+        .product-info .weight {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Price + Cart row */
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            gap: 1rem;
+        }
+
+        .price-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .price {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .price-unit {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Cart action */
+        .cart-action-container {
+            width: 115px;
+            height: 40px;
+            position: relative;
+            flex-shrink: 0;
+            /* To hide overflowing elements during sliding animation */
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .add-to-cart-btn {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            letter-spacing: 0.2px;
+            z-index: 1;
+        }
+
+        .add-to-cart-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Qty selector – FIX: Smooth slide animation instead of display:none */
+        .qty-selector {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            font-weight: 700;
+            z-index: 2;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .qty-selector.active {
+            transform: translateY(0);
+        }
+
+        .qty-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 36px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            line-height: 1;
+        }
+
+        .qty-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .qty-btn:active {
+            background: var(--primary-hover);
+        }
+
+        .qty-display {
+            font-size: 1rem;
+            font-weight: 700;
+            min-width: 28px;
+            text-align: center;
+            user-select: none;
+        }
+
+        /* ================================
+           TOAST NOTIFICATION
+        ================================ */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--primary);
+            color: #fff;
+            padding: 0.85rem 1.4rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(26, 92, 42, 0.3);
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 300px;
+            transform: translateY(80px) scale(0.9);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 22px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        /* ================================
+           FOOTER
+        ================================ */
+        footer {
+            background: var(--primary-hover);
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .footer-brand .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.83rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+            max-width: 220px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .footer-right {
+            text-align: right;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            padding: 1rem 2rem;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================ */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 1.25rem;
+                height: 62px;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .logo-sub {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav {
+                display: none;
+                position: absolute;
+                top: 62px;
+                left: 0;
+                right: 0;
+                background: var(--primary-hover);
+                flex-direction: column;
+                gap: 0;
+                padding: 0.5rem 0 1rem;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            nav.open {
+                display: flex;
+            }
+
+            nav a {
+                padding: 0.75rem 1.5rem;
+                border-radius: 0;
+                font-size: 1rem;
+                width: 100%;
+            }
+
+            .cart-link {
+                border-radius: 0 !important;
+                padding: 0.75rem 1.5rem !important;
+                background: rgba(255, 255, 255, 0.08);
+                border: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem 2rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 0 1rem 4rem;
+            }
+
+            .section-header {
+                padding: 0 0.5rem;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                text-align: center;
+            }
+
+            .footer-brand p {
+                max-width: 100%;
+            }
+
+            .footer-right {
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-strip {
+                gap: 1.2rem;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.85rem;
+            }
+
+            .product-info {
+                padding: 0.9rem;
+            }
+
+            .product-image-container {
+                height: 140px;
+            }
+
+            .price {
+                font-size: 1.15rem;
+            }
+
+            .cart-action-container {
+                width: 90px;
+                height: 34px;
+            }
+
+            .add-to-cart-btn {
+                font-size: 0.75rem;
+                gap: 2px;
+            }
+
+            .qty-btn {
+                width: 28px;
+                font-size: 1rem;
+            }
+
+            .qty-display {
+                font-size: 0.88rem;
+            }
+
+            .hero-title {
+                font-size: 1.65rem;
+            }
+        }
+
+        /* ================================
+           GRID STATUS STATES
+           (loading, empty, error)
+        ================================ */
+
+        /* Spans the full grid width and centres its content vertically.
+           Used for loading, empty-catalog, and error states. */
+        .grid-status {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 5rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Applied alongside .grid-status when the API call fails */
+        .grid-status--error {
+            color: var(--accent);
+        }
+
+        /* CSS-only spinning ring — no image or icon dependency required */
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: spin 0.75s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Shown in place of the Add-to-Cart button for out-of-stock items */
+        .out-of-stock-label {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: 1.5px solid var(--border);
+            padding: 0.3rem 0.75rem;
+            border-radius: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html" class="logo" aria-label="Manish General Store Home">
+            <img src="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3"
+                alt="Manish General Store Logo" class="logo-icon" loading="lazy" onerror="this.style.display='none'">
+            <div>
+                <span class="logo-text">Manish General Store</span>
+                <span class="logo-sub">Bundu, Ranchi</span>
+            </div>
+        </a>
+
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav id="mainNav" role="navigation" aria-label="Main navigation">
+            <a href="index.html" class="active" aria-current="page">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="cart.html" class="cart-link" aria-label="Cart">
+                <span class="cart-icon">🛒</span>
+                Cart
+                <span class="cart-badge" id="cartBadge" aria-live="polite" aria-label="items in cart">0</span>
+            </a>
+        </nav>
+    </header>
+
+    <section class="hero" aria-label="Hero">
+        <div class="hero-tag">🌿 Fresh &amp; Local</div>
+        <h1 class="hero-title">Order Groceries <em>Anytime,</em><br>Anywhere in Bundu</h1>
+        <p class="hero-subtitle">Premium daily essentials delivered to your doorstep — fresh quality, honest prices,
+            straight from your neighbourhood store.</p>
+        <div class="stats-strip" aria-label="Store highlights">
+            <div class="stat-item">
+                <span class="stat-num">200+</span>
+                <span class="stat-label">Products</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">4.9★</span>
+                <span class="stat-label">Rating</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">Same Day</span>
+                <span class="stat-label">Delivery</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">Since '98</span>
+                <span class="stat-label">Trusted</span>
+            </div>
+        </div>
+    </section>
+
+    <main id="products">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span>Today's Picks</span>
+                Featured Products
+            </h2>
+            <a href="#products" class="view-all" aria-label="View all products">View All →</a>
+        </div>
+
+        <!-- Product cards are injected here by renderProducts() via fetchProducts() -->
+        <section class="product-grid" id="product-grid" aria-label="Product listing"></section>
+    </main>
+
+    <div id="toastNotification" class="toast" role="status" aria-live="polite">
+        <span class="toast-icon" aria-hidden="true">✓</span>
+        <span id="toastMessage">Item added to cart!</span>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo-text">Manish General Store</div>
+                <p>Your trusted neighbourhood grocery store in Bundu, Ranchi since 1998.</p>
+            </div>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="cart.html">Cart</a>
+            </nav>
+            <div class="footer-right">
+                <p>📞 Call us anytime</p>
+                <p style="margin-top:6px; font-size:0.85rem; color:rgba(255,255,255,0.6);">Bundu, Ranchi, Jharkhand</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Manish General Store. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+
+        // ── Utility: HTML Escape ───────────────────────────────────────────────────
+        // Sanitises values before injecting them into template literals.
+        // The data comes from our own API, but this is cheap insurance — it
+        // prevents a bad DB row from breaking the page or causing XSS.
+        function escapeHTML(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ── App bootstrap ──────────────────────────────────────────────────────────
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // ── DOM references ─────────────────────────────────────────────────
+            const grid = document.getElementById("product-grid");
+            const cartBadge = document.getElementById("cartBadge");
+            const toastEl = document.getElementById("toastNotification");
+            const toastMsgEl = document.getElementById("toastMessage");
+            const menuToggle = document.getElementById("menuToggle");
+            const mainNav = document.getElementById("mainNav");
+
+            // ── State: load from localStorage ──────────────────────────────────
+            // cart is a plain object: { [productId]: quantity }
+            let cart = {};
+            function loadCart() {
+                try {
+                    cart = JSON.parse(localStorage.getItem('manishCartState')) || {};
+                } catch {
+                    cart = {};
+                }
+            }
+            loadCart();
+
+            // ── Helpers ────────────────────────────────────────────────────────
+
+            function saveCart() {
+                // TODO: Replace with backend API POST request in Phase 10
+                localStorage.setItem('manishCartState', JSON.stringify(cart));
+            }
+
+            function getCartTotal() {
+                return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            }
+
+            function updateBadge() {
+                const total = getCartTotal();
+                cartBadge.textContent = total;
+                cartBadge.classList.toggle('visible', total > 0);
+            }
+
+            // Slides the qty-selector in (active) or out based on quantity.
+            // Uses CSS animation class toggle, not display:none, to keep the
+            // smooth spring transition working correctly.
+            function updateCardUI(container, qty) {
+                const qtySelector = container.querySelector('.qty-selector');
+                const qtyDisplay = container.querySelector('.qty-display');
+                if (qty > 0) {
+                    qtySelector.classList.add('active');
+                    qtyDisplay.textContent = qty;
+                } else {
+                    qtySelector.classList.remove('active');
+                }
+            }
+
+            // Walks every cart-action-container currently in the DOM and
+            // applies the persisted cart state to it. Called after:
+            //   • fetchProducts() finishes rendering
+            //   • pageshow (bfcache navigation)
+            //   • storage event (another tab changed the cart)
+            function syncAllCards() {
+                document.querySelectorAll('.cart-action-container').forEach(container => {
+                    updateCardUI(container, cart[container.dataset.id] || 0);
+                });
+                updateBadge();
+            }
+
+            // ── Toast ──────────────────────────────────────────────────────────
+            let toastTimer = null;
+            function showToast(message) {
+                toastMsgEl.textContent = message;
+                toastEl.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+            }
+
+            // ── renderProducts ─────────────────────────────────────────────────
+            // Accepts the `data` array from GET /api/v1/products and injects
+            // product cards into the grid. Clears existing content first so it
+            // is safe to call multiple times (e.g. after a search/filter phase).
+            //
+            // API row shape (all fields guaranteed by server.js §9d):
+            //   { id, name, description, price, category, in_stock,
+            //     image_url, created_at, stock_quantity }
+            //
+            // Note: `price` arrives as a Postgres NUMERIC string ("285.00").
+            //       parseFloat handles both string and number inputs safely.
+            //       `stock_quantity` is an integer; stored on the DOM as
+            //       data-stock so the delegation handler can read it without
+            //       a second fetch.
+            function renderProducts(products) {
+                grid.innerHTML = '';
+
+                // Maps DB category values to existing badge CSS classes.
+                // Extend this map whenever a new category is added to the DB.
+                const BADGE_MAP = {
+                    'Atta & Flours': { label: 'New', cssClass: 'badge-new' },
+                    'Rice & Grains': { label: 'Bestseller', cssClass: 'badge-best' },
+                    'Dairy & Eggs': { label: 'Fresh', cssClass: 'badge-fresh' },
+                    'Salt & Spices': { label: 'Fresh', cssClass: 'badge-fresh' },
+                };
+
+                products.forEach(product => {
+                    // Always coerce id to string — handles both integer PKs
+                    // (from Postgres SERIAL) and UUID strings transparently.
+                    const id = String(product.id);
+                    const name = escapeHTML(product.name);
+
+                    // ── Image ──────────────────────────────────────────────
+                    // Pass the image_url straight through; empty string is
+                    // handled gracefully by the existing CSS opacity rule.
+                    const imgSrc = escapeHTML(product.image_url || '');
+
+                    // ── Description (shown in .weight slot) ───────────────
+                    // The DB stores a full sentence; we truncate to 65 chars
+                    // so all cards remain the same height on the grid. The
+                    // untruncated description lives on the product detail page.
+                    const rawDesc = product.description || product.category || '';
+                    const desc = escapeHTML(
+                        rawDesc.length > 65
+                            ? rawDesc.slice(0, 65).trimEnd() + '…'
+                            : rawDesc
+                    );
+
+                    // ── Price ──────────────────────────────────────────────
+                    // toFixed(2) normalises "285.00", 285, and 285.5 to the
+                    // same two-decimal format expected by the price display.
+                    const price = parseFloat(product.price).toFixed(2);
+
+                    // ── Badge ──────────────────────────────────────────────
+                    const badge = BADGE_MAP[product.category] ?? null;
+                    const badgeHTML = badge
+                        ? `<span class="badge ${badge.cssClass}">${badge.label}</span>`
+                        : '';
+
+                    // ── Cart interaction area ──────────────────────────────
+                    // Out-of-stock items: replace the Add button with a static
+                    // label. The cart-action-container is omitted entirely so
+                    // the delegation handler never fires for these items.
+                    const cartAreaHTML = product.in_stock
+                        ? `<div class="cart-action-container"
+                                data-id="${id}"
+                                data-name="${name}"
+                                data-price="${product.price}"
+                                data-stock="${parseInt(product.stock_quantity, 10) || 0}">
+                                <button class="add-to-cart-btn"
+                                    aria-label="Add ${name} to cart">
+                                    + Add
+                                </button>
+                                <div class="qty-selector" role="group"
+                                    aria-label="Quantity selector">
+                                    <button class="qty-btn minus-btn"
+                                        aria-label="Decrease quantity">−</button>
+                                    <span class="qty-display" aria-live="polite">1</span>
+                                    <button class="qty-btn plus-btn"
+                                        aria-label="Increase quantity">+</button>
+                                </div>
+                            </div>`
+                        : `<span class="out-of-stock-label">Out of Stock</span>`;
+
+                    // ── Card HTML ──────────────────────────────────────────
+                    const cardHTML = `
+                        <article class="product-card" role="region"
+                            aria-label="${name}">
+                            ${badgeHTML}
+                            <a href="product.html?id=${id}"
+                                class="product-image-container"
+                                aria-label="View ${name} details"
+                                tabindex="-1">
+                                <img src="${imgSrc}" alt="${name}" loading="lazy">
+                            </a>
+                            <div class="product-info">
+                                <a href="product.html?id=${id}" class="product-link">
+                                    <h3>${name}</h3>
+                                </a>
+                                <p class="weight">${desc}</p>
+                                <div class="price-row">
+                                    <div class="price-block">
+                                        <span class="price">₹${price}</span>
+                                        <span class="price-unit">per item</span>
+                                    </div>
+                                    ${cartAreaHTML}
+                                </div>
+                            </div>
+                        </article>`;
+
+                    grid.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            }
+
+            // ── fetchProducts ──────────────────────────────────────────────────
+            // Fetches the live catalog from GET /api/v1/products, renders cards,
+            // then restores the persisted cart state onto the new DOM nodes.
+            //
+            // State machine:
+            //   LOADING — spinner shown while awaiting network response.
+            //   SUCCESS — cards rendered; cart state applied via syncAllCards().
+            //   EMPTY   — API returned 0 products; user-friendly notice shown.
+            //   ERROR   — network failure or non-2xx HTTP status; actionable
+            //             error message shown with server-running hint.
+            async function fetchProducts() {
+
+                // ── LOADING state ──────────────────────────────────────────
+                grid.innerHTML = `
+                    <div class="grid-status" role="status" aria-live="polite">
+                        <span class="spinner" aria-hidden="true"></span>
+                        Loading products…
+                    </div>`;
+
+                try {
+                    const response = await fetch('http://localhost:5000/api/v1/products');
+
+                    // Treat any non-2xx response as a hard error so the catch
+                    // block handles the display — keeps the happy path clean.
+                    if (!response.ok) {
+                        throw new Error(
+                            `API responded with HTTP ${response.status} ${response.statusText}`
+                        );
+                    }
+
+                    const json = await response.json();
+
+                    // ── EMPTY catalog state ────────────────────────────────
+                    if (!Array.isArray(json.data) || json.data.length === 0) {
+                        grid.innerHTML = `
+                            <div class="grid-status" role="status">
+                                🛒 No products available at the moment. Check back soon!
+                            </div>`;
+                        return;
+                    }
+
+                    // ── SUCCESS state ──────────────────────────────────────
+                    // Render cards, then immediately sync the persisted cart
+                    // state so any items already in the cart show their qty
+                    // selector without requiring a user interaction.
+                    renderProducts(json.data);
+                    syncAllCards();
+
+                } catch (err) {
+                    // Log the technical detail for the developer while showing
+                    // a human-readable message in the UI.
+                    console.error('[fetchProducts] Failed to load catalog:', err.message);
+
+                    // ── ERROR state ────────────────────────────────────────
+                    grid.innerHTML = `
+                        <div class="grid-status grid-status--error" role="alert">
+                            ⚠️ Could not load products at this time.
+                            Please make sure the server is running.
+                        </div>`;
+                }
+            }
+
+            // ── Cart event delegation ──────────────────────────────────────────
+            // A SINGLE click listener on the grid container handles every cart
+            // button across all product cards, including any injected after the
+            // initial fetch or future re-renders.
+            //
+            // WHY delegation instead of per-card listeners:
+            //   Per-card listeners must be attached AFTER the cards are in the
+            //   DOM. Because fetchProducts() is async, any querySelectorAll run
+            //   immediately after calling it finds an empty grid. Delegation
+            //   sidesteps this entirely — the listener is registered once here,
+            //   before fetchProducts() is even called, and stays valid forever.
+            grid.addEventListener('click', (e) => {
+
+                // Walk up from the exact click target to the nearest
+                // .cart-action-container. If the click landed outside one
+                // (e.g. on the card image or title), bail out immediately.
+                const container = e.target.closest('.cart-action-container');
+                if (!container) return;
+
+                const id = container.dataset.id;
+                const name = container.dataset.name;
+
+                // stock is written as data-stock during renderProducts().
+                // parseInt with radix 10 is safe even if the attribute is
+                // absent (returns NaN → coerced to 0, so all increments are
+                // blocked — a safe fallback that never oversells).
+                const stock = parseInt(container.dataset.stock, 10) || 0;
+
+                if (e.target.closest('.add-to-cart-btn')) {
+                    // ── Add: always starts at quantity 1 ──────────────────
+                    // Guard: if stock is somehow 0 (e.g. a stale DOM from
+                    // a bfcache restore after the last unit was sold), treat
+                    // it the same as an out-of-stock item.
+                    if (stock < 1) {
+                        showToast(`Only ${stock} units available in stock!`);
+                        return;
+                    }
+                    cart[id] = 1;
+                    saveCart();
+                    updateCardUI(container, 1);
+                    updateBadge();
+                    showToast(`${name} added to cart!`);
+
+                } else if (e.target.closest('.plus-btn')) {
+                    // ── Plus: increment, capped at stock_quantity ──────────
+                    const current = cart[id] || 0;
+                    if (current >= stock) {
+                        // User has already reached the warehouse limit.
+                        showToast(`Only ${stock} unit${stock === 1 ? '' : 's'} available in stock!`);
+                        return;
+                    }
+                    cart[id] = current + 1;
+                    saveCart();
+                    updateCardUI(container, cart[id]);
+                    updateBadge();
+
+                } else if (e.target.closest('.minus-btn')) {
+                    // ── Minus: decrement; remove entry when it reaches 0 ──
+                    if (cart[id] > 1) {
+                        cart[id]--;
+                    } else {
+                        delete cart[id];
+                    }
+                    saveCart();
+                    updateCardUI(container, cart[id] || 0);
+                    updateBadge();
+                }
+            });
+
+            // ── Mobile hamburger menu ──────────────────────────────────────────
+            menuToggle.addEventListener('click', () => {
+                const isOpen = mainNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen);
+            });
+
+            // Close nav on link click (mobile)
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('open');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            // ── BFCache & Tab Syncing ──────────────────────────────────────────
+            // pageshow fires when the browser restores a page from bfcache
+            // (back/forward navigation) — a DOMContentLoaded re-run does NOT
+            // fire in that case, so this is the only reliable hook.
+            // storage fires when another tab writes to localStorage, keeping
+            // the cart badge in sync across multiple open tabs.
+            window.addEventListener('pageshow', () => { loadCart(); syncAllCards(); });
+            window.addEventListener('storage', () => { loadCart(); syncAllCards(); });
+
+            // ── Bootstrap ──────────────────────────────────────────────────────
+            // Kick off the async product fetch. The loading spinner is shown
+            // immediately; cards appear once the API responds.
+            fetchProducts();
+        });
+
+    </script>
+
+</body>
+
+</html>
