@@ -164,6 +164,53 @@
             background: rgba(255, 255, 255, 0.22) !important;
         }
 
+        /* Account / Sign-In button */
+        .account-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            color: rgba(255, 255, 255, 0.92) !important;
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            padding: 0.42rem 1.05rem !important;
+            border-radius: 20px !important;
+            text-decoration: none;
+            transition:
+                background var(--speed) ease,
+                border-color var(--speed) ease,
+                color var(--speed) ease,
+                box-shadow var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        .account-btn:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+            border-color: rgba(255, 255, 255, 0.55) !important;
+            color: #fff !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .account-btn__icon {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            opacity: 0.9;
+        }
+
+        /* Logout variant — subtle destructive accent on hover */
+        .account-btn--logout {
+            background: rgba(232, 80, 26, 0.15);
+            border-color: rgba(232, 80, 26, 0.40);
+        }
+
+        .account-btn--logout:hover {
+            background: rgba(232, 80, 26, 0.28) !important;
+            border-color: rgba(232, 80, 26, 0.65) !important;
+        }
+
         .cart-badge {
             background: var(--accent);
             color: #fff;
@@ -1424,6 +1471,15 @@
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
+            <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
+                <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                </svg>
+                <span class="account-btn__label" id="accountBtnLabel">Sign In</span>
+            </a>
             <a href="cart.html" class="cart-link" aria-label="Cart">
                 🛒 Cart
                 <span class="cart-badge" id="cartBadge">0</span>
@@ -1793,6 +1849,51 @@
                     : cartBadge.classList.remove("visible");
             }
             updateBadge();
+
+            /* ─────────────────────────────────────────────────────────
+               AUTH — update header account button based on session
+            ───────────────────────────────────────────────────────── */
+            (function initAccountButton() {
+                const accountBtn = document.getElementById("accountBtn");
+                const accountLabel = document.getElementById("accountBtnLabel");
+                if (!accountBtn) return;
+
+                let userData = null;
+                try {
+                    const raw = localStorage.getItem("user_data");
+                    userData = raw ? JSON.parse(raw) : null;
+                } catch { userData = null; }
+
+                const jwt = localStorage.getItem("user_jwt");
+                const isLoggedIn = !!(jwt && userData);
+
+                if (isLoggedIn) {
+                    // Derive a friendly first name (fall back gracefully)
+                    const firstName = (
+                        userData.first_name ||
+                        userData.firstName ||
+                        userData.name?.split(" ")[0] ||
+                        userData.email?.split("@")[0] ||
+                        "You"
+                    );
+
+                    // Switch to logout appearance
+                    accountBtn.removeAttribute("href");
+                    accountBtn.setAttribute("role", "button");
+                    accountBtn.setAttribute("aria-label", `Signed in as ${firstName}. Click to log out.`);
+                    accountBtn.classList.add("account-btn--logout");
+                    accountLabel.textContent = `Hi, ${firstName} — Log out`;
+
+                    accountBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem("user_jwt");
+                        localStorage.removeItem("user_data");
+                        showToast("You've been signed out. See you soon!");
+                        setTimeout(() => location.reload(), 1600);
+                    });
+                }
+                // If not logged in: keep the default href="user-login.html" and label "Sign In"
+            })();
 
             /* ─────────────────────────────────────────────────────────
                EMPTY CART GUARD

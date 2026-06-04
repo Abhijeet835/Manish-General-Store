@@ -7,7 +7,8 @@
     <meta name="description"
         content="Contact Manish General Store — reach us for orders, queries, or support in Bundu, Ranchi.">
     <title>Manish General Store | Contact Us</title>
-    <link rel="icon" type="image/png" href="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3">
+    <link rel="icon" type="image/png"
+        href="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -161,6 +162,93 @@
 
         .cart-link:hover {
             background: rgba(255, 255, 255, 0.22) !important;
+        }
+
+        /* Account / Sign-In button */
+        .account-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            color: rgba(255, 255, 255, 0.92) !important;
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            padding: 0.42rem 1.05rem !important;
+            border-radius: 20px !important;
+            text-decoration: none;
+            transition:
+                background var(--speed) ease,
+                border-color var(--speed) ease,
+                color var(--speed) ease,
+                box-shadow var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        .account-btn:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+            border-color: rgba(255, 255, 255, 0.55) !important;
+            color: #fff !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .account-btn__icon {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            opacity: 0.9;
+        }
+
+        /* Logout variant — subtle destructive accent on hover */
+        .account-btn--logout {
+            background: rgba(232, 80, 26, 0.15);
+            border-color: rgba(232, 80, 26, 0.40);
+        }
+
+        .account-btn--logout:hover {
+            background: rgba(232, 80, 26, 0.28) !important;
+            border-color: rgba(232, 80, 26, 0.65) !important;
+        }
+
+        /* Sign-out toast notification */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--primary);
+            color: #fff;
+            padding: 0.85rem 1.4rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(26, 92, 42, 0.3);
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 300px;
+            transform: translateY(80px) scale(0.9);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 22px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
         }
 
         .cart-icon {
@@ -1091,6 +1179,15 @@
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
             <a href="contact.html" class="active" aria-current="page">Contact</a>
+            <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
+                <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                </svg>
+                <span class="account-btn__label" id="accountBtnLabel">Sign In</span>
+            </a>
             <a href="cart.html" class="cart-link" aria-label="Cart">
                 <span class="cart-icon">🛒</span>
                 Cart
@@ -1270,6 +1367,11 @@
     </section>
 
     <!-- ===== FOOTER ===== -->
+    <div id="toastNotification" class="toast" role="status" aria-live="polite">
+        <span class="toast-icon" aria-hidden="true">✓</span>
+        <span id="toastMessage">Done!</span>
+    </div>
+
     <footer>
         <div class="footer-inner">
             <div class="footer-brand">
@@ -1323,6 +1425,65 @@
             loadCartAndUpdateBadge();
             window.addEventListener('storage', loadCartAndUpdateBadge);
             window.addEventListener('pageshow', loadCartAndUpdateBadge);
+
+            /* ─────────────────────────────────────────────────────────
+               SIGN-OUT TOAST
+            ───────────────────────────────────────────────────────── */
+            const toastEl = document.getElementById('toastNotification');
+            const toastMsgEl = document.getElementById('toastMessage');
+            let toastTimer = null;
+
+            function showToast(message) {
+                toastMsgEl.textContent = message;
+                toastEl.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+            }
+
+            /* ─────────────────────────────────────────────────────────
+               AUTH — update header account button based on session
+            ───────────────────────────────────────────────────────── */
+            (function initAccountButton() {
+                const accountBtn = document.getElementById('accountBtn');
+                const accountLabel = document.getElementById('accountBtnLabel');
+                if (!accountBtn) return;
+
+                let userData = null;
+                try {
+                    const raw = localStorage.getItem('user_data');
+                    userData = raw ? JSON.parse(raw) : null;
+                } catch { userData = null; }
+
+                const jwt = localStorage.getItem('user_jwt');
+                const isLoggedIn = !!(jwt && userData);
+
+                if (isLoggedIn) {
+                    // Derive a friendly first name (fall back gracefully)
+                    const firstName = (
+                        userData.first_name ||
+                        userData.firstName ||
+                        userData.name?.split(' ')[0] ||
+                        userData.email?.split('@')[0] ||
+                        'You'
+                    );
+
+                    // Switch to logout appearance
+                    accountBtn.removeAttribute('href');
+                    accountBtn.setAttribute('role', 'button');
+                    accountBtn.setAttribute('aria-label', `Signed in as ${firstName}. Click to log out.`);
+                    accountBtn.classList.add('account-btn--logout');
+                    accountLabel.textContent = `Hi, ${firstName} — Log out`;
+
+                    accountBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('user_jwt');
+                        localStorage.removeItem('user_data');
+                        showToast('You\'ve been signed out. See you soon!');
+                        setTimeout(() => location.reload(), 1600);
+                    });
+                }
+                // If not logged in: keep the default href="user-login.html" and label "Sign In"
+            })();
 
             /* ─────────────────────────────────────────────────────────
                MOBILE HAMBURGER
@@ -1499,13 +1660,13 @@
                banner at the top of the form with an animated slide-in.
                hideErrorToast()               — collapses it.
             ───────────────────────────────────────────────────────── */
-            const errorToast        = document.getElementById('errorToast');
-            const errorToastTitle   = document.getElementById('errorToastTitle');
+            const errorToast = document.getElementById('errorToast');
+            const errorToastTitle = document.getElementById('errorToastTitle');
             const errorToastMessage = document.getElementById('errorToastMessage');
-            const errorToastClose   = document.getElementById('errorToastClose');
+            const errorToastClose = document.getElementById('errorToastClose');
 
             function showErrorToast(title, message) {
-                errorToastTitle.textContent   = title;
+                errorToastTitle.textContent = title;
                 errorToastMessage.textContent = message;
                 errorToast.classList.add('visible');
                 // Scroll the toast into view so it's visible on mobile
@@ -1574,11 +1735,11 @@
                 // phone and submittedAt are included as bonus metadata; the
                 // server ignores unknown fields gracefully.
                 const contactPayload = {
-                    fullName:    document.getElementById('fullName').value.trim(),
-                    phone:       document.getElementById('phone').value.trim(),
-                    email:       document.getElementById('email').value.trim(),
-                    subject:     document.getElementById('subject').value,
-                    message:     document.getElementById('message').value.trim(),
+                    fullName: document.getElementById('fullName').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    subject: document.getElementById('subject').value,
+                    message: document.getElementById('message').value.trim(),
                     submittedAt: new Date().toISOString(),
                 };
 
@@ -1600,7 +1761,7 @@
                     // Content-Type MUST be 'application/json' so Express's
                     // express.json() middleware parses the body correctly.
                     const response = await window.fetch(CONTACT_API_URL, {
-                        method:  'POST',
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
@@ -1627,7 +1788,7 @@
                     // Our Express server always returns a structured JSON
                     // error body (see the global error handler in server.js),
                     // so we attempt to read it for a descriptive message.
-                    let serverTitle   = `Server Error (${response.status})`;
+                    let serverTitle = `Server Error (${response.status})`;
                     let serverMessage = 'The server rejected the request. Please try again.';
 
                     try {
