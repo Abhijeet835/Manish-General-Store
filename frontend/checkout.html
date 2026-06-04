@@ -1029,6 +1029,71 @@
         }
 
         /* ================================
+           AUTOFILL BANNER
+           Shown when a logged-in user's
+           details are pre-filled from their
+           account. Dismissible.
+        ================================ */
+        .autofill-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #f0f9f1 0%, #e8f5e9 100%);
+            border: 1.5px solid #a5d6a7;
+            border-radius: var(--radius);
+            padding: 0.85rem 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            animation: cardIn 0.4s ease forwards;
+        }
+
+        .autofill-banner__icon {
+            font-size: 1.25rem;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .autofill-banner__body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .autofill-banner__title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.3;
+        }
+
+        .autofill-banner__sub {
+            font-size: 0.79rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        .autofill-banner__dismiss {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            transition: color 0.2s, background 0.2s;
+            margin-top: -2px;
+        }
+
+        .autofill-banner__dismiss:hover {
+            color: var(--primary);
+            background: rgba(26, 92, 42, 0.08);
+        }
+
+        /* ================================
            TOAST
         ================================ */
         .toast {
@@ -1896,6 +1961,202 @@
             })();
 
             /* ─────────────────────────────────────────────────────────
+               autofillFromSession
+               Pre-fills the Contact Information and Full Name fields
+               with data from the logged-in user's stored session.
+
+               Called once at page load, immediately after the auth
+               button is initialised, so the fields are ready before
+               the user even looks at the form.
+
+               Security / UX decisions:
+               ─────────────────────────────────────────────────────
+               1. CLIENT-SIDE EXPIRY CHECK
+                  The JWT is a signed base64url string of three parts:
+                  header.payload.signature.  We decode only the middle
+                  (payload) section to read the `exp` claim — no secret
+                  is needed for this; it is public information.  This
+                  prevents pre-filling with a definitely-expired session.
+                  The real cryptographic verification always happens on
+                  the server — this check is purely a UX guard.
+
+               2. FIELD VALIDATION IS CALLED AFTER FILL
+                  After setting each input value we call the existing
+                  validator functions (validateEmail, validatePhone,
+                  validateName) so the fields immediately render with
+                  their green valid state and the ✓ tick.  This also
+                  drives checkFormValidity() so the Place Order button
+                  enables correctly without any extra user interaction.
+
+               3. USER CAN ALWAYS OVERRIDE
+                  The pre-filled values are placed into normal <input>
+                  elements — the user can edit them freely.  No field
+                  is read-only.
+
+               4. GRACEFUL DEGRADATION
+                  Any missing field in user_data (e.g. phone is null)
+                  is simply skipped — the user must type it themselves.
+                  Any parse / localStorage error is silently swallowed
+                  so a corrupted storage entry never breaks checkout.
+            ───────────────────────────────────────────────────────── */
+            (function autofillFromSession() {
+                // ── 1. Read and validate session data ─────────────────
+                let userData = null;
+                let jwtToken = null;
+                try {
+                    const raw = localStorage.getItem("user_data");
+                    userData = raw ? JSON.parse(raw) : null;
+                    jwtToken = localStorage.getItem("user_jwt");
+                } catch {
+                    // Corrupted JSON in localStorage — bail out silently
+                    return;
+                }
+
+                // Nothing to do if the user is not logged in
+                if (!userData || !jwtToken) return;
+
+                // ── 2. Client-side JWT expiry check ────────────────────
+                // Decode the payload segment (index 1) from base64url.
+                // atob() requires standard base64; base64url uses - and _
+                // instead of + and /, so we normalise first.
+                try {
+                    const payloadSegment = jwtToken.split(".")[1];
+                    if (!payloadSegment) return; // malformed token
+
+                    // base64url → base64 → JSON string
+                    const base64 = payloadSegment
+                        .replace(/-/g, "+")
+                        .replace(/_/g, "/");
+                    // Pad to a multiple of 4 as atob() requires
+                    const padded = base64.padEnd(
+                        base64.length + (4 - (base64.length % 4)) % 4,
+                        "="
+                    );
+                    const decoded = JSON.parse(atob(padded));
+
+                    // `exp` is a Unix timestamp in seconds
+                    if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+                        // Token is expired — do not pre-fill; the server
+                        // will treat this request as a guest anyway.
+                        console.info("[Autofill] Session token is expired — skipping pre-fill.");
+                        return;
+                    }
+
+                    // Reject admin tokens (they should not be placing orders)
+                    if (decoded.role && decoded.role !== "user") {
+                        console.info("[Autofill] Non-user token role detected — skipping pre-fill.");
+                        return;
+                    }
+                } catch {
+                    // Could not decode the token — not a valid JWT; skip safely
+                    return;
+                }
+
+                // ── 3. Extract fields with flexible key support ────────
+                // Handles both snake_case (API response) and camelCase
+                // variants, plus the common `name` shorthand.
+                const fullName = (
+                    userData.full_name ||
+                    userData.fullName ||
+                    userData.name ||
+                    ""
+                ).trim();
+
+                const email = (
+                    userData.email || ""
+                ).trim().toLowerCase();
+
+                const phone = (
+                    userData.phone ||
+                    userData.mobile ||
+                    userData.phone_number ||
+                    ""
+                ).trim().replace(/\D/g, "").slice(0, 10);
+
+                // ── 4. Fill fields and re-run their validators ─────────
+                // Filling a field without triggering its validator would
+                // leave the button disabled even though the form is valid.
+
+                let filledCount = 0;
+
+                if (email) {
+                    const el = document.getElementById("fieldEmail");
+                    if (el) {
+                        el.value = email;
+                        window.validateEmail(true); // blurMode=true → full validation
+                        filledCount++;
+                    }
+                }
+
+                if (phone && phone.length === 10 && /^[6-9]/.test(phone)) {
+                    const el = document.getElementById("fieldPhone");
+                    if (el) {
+                        el.value = phone;
+                        window.validatePhone(true);
+                        filledCount++;
+                    }
+                }
+
+                if (fullName && fullName.length >= 3) {
+                    const el = document.getElementById("fieldName");
+                    if (el) {
+                        el.value = fullName;
+                        window.validateName(true);
+                        filledCount++;
+                    }
+                }
+
+                // Nothing was actually filled — no banner needed
+                if (filledCount === 0) return;
+
+                // ── 5. Render the autofill banner ──────────────────────
+                // Inserted above the first form section so it's the first
+                // thing the user sees when they arrive at the form area.
+                const formPanel = document.getElementById("formPanel");
+                if (!formPanel) return;
+
+                // Derive a friendly name for the banner copy
+                const firstName = (
+                    userData.first_name ||
+                    userData.firstName ||
+                    fullName.split(" ")[0] ||
+                    email.split("@")[0] ||
+                    "you"
+                );
+
+                const banner = document.createElement("div");
+                banner.className = "autofill-banner";
+                banner.setAttribute("role", "status");
+                banner.setAttribute("aria-live", "polite");
+                banner.setAttribute("id", "autofillBanner");
+                banner.innerHTML = `
+                    <span class="autofill-banner__icon" aria-hidden="true">👋</span>
+                    <div class="autofill-banner__body">
+                        <div class="autofill-banner__title">
+                            Welcome back, ${firstName}! We've filled in your details.
+                        </div>
+                        <div class="autofill-banner__sub">
+                            Your saved contact info has been pre-filled below.
+                            You can edit anything before placing your order.
+                        </div>
+                    </div>
+                    <button
+                        class="autofill-banner__dismiss"
+                        aria-label="Dismiss autofill notice"
+                        onclick="
+                            document.getElementById('autofillBanner').remove();
+                            event.stopPropagation();
+                        "
+                        title="Dismiss"
+                    >✕</button>
+                `;
+
+                // Insert as the first child of the form panel so it sits
+                // above the Contact Information section card.
+                formPanel.insertBefore(banner, formPanel.firstChild);
+            })();
+
+            /* ─────────────────────────────────────────────────────────
                EMPTY CART GUARD
                If cart is empty, hide the checkout form and show the
                redirect state so the user cannot submit a ghost order.
@@ -2094,10 +2355,27 @@
                 };
 
                 // ── POST to the Order Engine ───────────────────────────────────
+                // Read the JWT fresh at submission time (not from a stale closure)
+                // so that a token that was set after page load is always picked up.
+                //
+                // Security notes:
+                //   • The token is sent ONLY over the existing HTTPS connection.
+                //   • The server's optionalAuth middleware verifies the signature
+                //     and expiry — we do not need to do that here.
+                //   • If no JWT exists, the Authorization header is simply omitted
+                //     entirely, ensuring clean guest checkout with no extra noise.
+                //   • We never read the token value into the payload body — it goes
+                //     only into the Authorization header, exactly as the server expects.
+                const requestHeaders = { "Content-Type": "application/json" };
+                const jwtToken = localStorage.getItem("user_jwt");
+                if (jwtToken) {
+                    requestHeaders["Authorization"] = `Bearer ${jwtToken}`;
+                }
+
                 try {
                     const response = await fetch("https://manish-general-store-api.onrender.com/api/v1/orders", {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: requestHeaders,
                         body: JSON.stringify(payload),
                     });
 
