@@ -17,12 +17,14 @@
     "author": "Manish General Store",
     "license": "ISC",
     "dependencies": {
+        "bcrypt": "^6.0.0",
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
+        "express-rate-limit": "^8.5.2",
         "helmet": "^7.1.0",
-        "pg": "^8.12.0",
-        "jsonwebtoken": "^9.0.2"
+        "jsonwebtoken": "^9.0.3",
+        "pg": "^8.12.0"
     },
     "devDependencies": {
         "nodemon": "^3.1.4"

@@ -7,11 +7,40 @@ const helmet = require("helmet");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
+const bcrypt = require("bcrypt");
+const rateLimit = require("express-rate-limit");
 
-const JWT_SECRET = process.env.JWT_SECRET || "manish_secret_123";
-const ADMIN_USER = process.env.ADMIN_USER || "admin";
-const ADMIN_PASS = process.env.ADMIN_PASS || "admin123";
+// ── Environment validation ─────────────────────────────────────────────────────
+// Fail fast — never run with missing or defaulted secrets
+const JWT_SECRET = process.env.JWT_SECRET;
+const ADMIN_USER = process.env.ADMIN_USER;
+const ADMIN_PASS = process.env.ADMIN_PASS;
 
+if (!JWT_SECRET || !ADMIN_USER || !ADMIN_PASS) {
+    console.error("[Startup] FATAL: JWT_SECRET, ADMIN_USER, and ADMIN_PASS must be set in environment variables.");
+    process.exit(1);
+}
+
+// ── Security constants ─────────────────────────────────────────────────────────
+const SALT_ROUNDS = 12; // ~250 ms per hash — strong defence against offline brute-force
+
+// ── Rate limiter — applied only to POST /api/v1/users/login ───────────────────
+const loginRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15-minute window
+    max: 5,                    // max 5 attempts per IP per window
+    standardHeaders: true,     // return RateLimit-* headers
+    legacyHeaders: false,
+    handler: (req, res) => {
+        console.warn(`[Rate Limit] Login blocked for IP ${req.ip} at ${new Date().toISOString()}`);
+        return res.status(429).json({
+            status: "error",
+            code: 429,
+            message: "Too many login attempts. Please try again after 15 minutes.",
+        });
+    },
+});
+
+// ── Database pool ──────────────────────────────────────────────────────────────
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     max: 10,
@@ -19,19 +48,14 @@ const pool = new Pool({
     connectionTimeoutMillis: 5_000,
     ssl: process.env.NODE_ENV === "production"
         ? { rejectUnauthorized: true }   // ✅ Verifies Neon's cert in production
-        : false                          // ✅ No SSL needed for local dev
+        : false,                         // ✅ No SSL needed for local dev
 });
 
-pool.on("error", (err) => {
-    console.error("[pg Pool] Unexpected error on idle client:", err.message);
-});
-pool.on("connect", () => {
-    console.log("[pg Pool] New client connected to PostgreSQL.");
-});
-pool.on("remove", () => {
-    console.log("[pg Pool] Client removed from pool.");
-});
+pool.on("error", (err) => { console.error("[pg Pool] Unexpected error on idle client:", err.message); });
+pool.on("connect", () => { console.log("[pg Pool] New client connected to PostgreSQL."); });
+pool.on("remove", () => { console.log("[pg Pool] Client removed from pool."); });
 
+// ── Express app ────────────────────────────────────────────────────────────────
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -45,6 +69,7 @@ app.use(cors({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// ── Middleware: verify admin JWT ───────────────────────────────────────────────
 function verifyAdmin(req, res, next) {
     const authHeader = req.headers["authorization"];
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -68,12 +93,14 @@ function verifyAdmin(req, res, next) {
     }
 }
 
+// ── Database initialisation ────────────────────────────────────────────────────
 async function initializeDatabase() {
     let client;
     try {
         client = await pool.connect();
         console.log("[DB Init] Connected to PostgreSQL. Running table migrations...");
 
+        // contact_submissions
         await client.query(`
             CREATE TABLE IF NOT EXISTS contact_submissions (
                 id         SERIAL       PRIMARY KEY,
@@ -95,6 +122,7 @@ async function initializeDatabase() {
         `);
         console.log("[DB Init] contact_submissions table is ready.");
 
+        // products
         await client.query(`
             CREATE TABLE IF NOT EXISTS products (
                 id             SERIAL        PRIMARY KEY,
@@ -111,6 +139,7 @@ async function initializeDatabase() {
         `);
         console.log("[DB Init] products table is ready.");
 
+        // orders
         await client.query(`
             CREATE TABLE IF NOT EXISTS orders (
                 id             SERIAL        PRIMARY KEY,
@@ -127,6 +156,7 @@ async function initializeDatabase() {
         `);
         console.log("[DB Init] orders table is ready.");
 
+        // order_items
         await client.query(`
             CREATE TABLE IF NOT EXISTS order_items (
                 id                SERIAL        PRIMARY KEY,
@@ -143,6 +173,23 @@ async function initializeDatabase() {
         `);
         console.log("[DB Init] order_items table is ready.");
 
+        // ── users ──────────────────────────────────────────────────────────────
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id            SERIAL        PRIMARY KEY,
+                full_name     VARCHAR(255)  NOT NULL,
+                email         VARCHAR(255)  NOT NULL UNIQUE,
+                phone         VARCHAR(20)   NULL,
+                password_hash VARCHAR(255)  NOT NULL,
+                created_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+            );
+        `);
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_users_email
+                ON users (email);
+        `);
+        console.log("[DB Init] users table is ready.");
+
     } catch (err) {
         console.error("[DB Init] FATAL: Could not initialise the database.");
         console.error("[DB Init] Error:", err.message);
@@ -152,6 +199,7 @@ async function initializeDatabase() {
     }
 }
 
+// ── Input validators ───────────────────────────────────────────────────────────
 const validateContactPayload = (body) => {
     const REQUIRED_FIELDS = ["fullName", "email", "subject", "message"];
     const errors = [];
@@ -167,6 +215,45 @@ const validateContactPayload = (body) => {
     });
     return { valid: errors.length === 0, errors };
 };
+
+/**
+ * Validates user registration payload.
+ * Returns { valid: boolean, errors: string[] }
+ */
+const validateRegisterPayload = (body) => {
+    const errors = [];
+
+    // Full name — minimum 2 characters
+    if (!body.full_name || typeof body.full_name !== "string" || body.full_name.trim().length < 2) {
+        errors.push('"full_name" is required and must be at least 2 characters.');
+    }
+
+    // Email — basic RFC-5322 surface check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!body.email || typeof body.email !== "string" || !emailRegex.test(body.email.trim())) {
+        errors.push('"email" must be a valid email address.');
+    }
+
+    // Phone — optional; if provided must be 7–15 chars, digits/spaces/+/-
+    if (body.phone !== undefined && body.phone !== null && body.phone !== "") {
+        const phoneRegex = /^[+\d][\d\s\-]{6,14}$/;
+        if (typeof body.phone !== "string" || !phoneRegex.test(body.phone.trim())) {
+            errors.push('"phone" must be a valid phone number (7–15 digits).');
+        }
+    }
+
+    // Password — min 8 chars, ≥1 uppercase, ≥1 digit, ≥1 special character
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    if (!body.password || typeof body.password !== "string" || !passwordRegex.test(body.password)) {
+        errors.push('"password" must be at least 8 characters and include an uppercase letter, a number, and a special character.');
+    }
+
+    return { valid: errors.length === 0, errors };
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  ROUTES
+// ══════════════════════════════════════════════════════════════════════════════
 
 // Health check
 app.get("/api/v1/health", (req, res) => {
@@ -189,7 +276,7 @@ app.get("/api/v1", (req, res) => {
     });
 });
 
-// POST /api/v1/contact
+// ── POST /api/v1/contact ───────────────────────────────────────────────────────
 app.post("/api/v1/contact", async (req, res, next) => {
     const body = req.body && typeof req.body === "object" ? req.body : {};
     const { valid, errors } = validateContactPayload(body);
@@ -244,7 +331,164 @@ app.post("/api/v1/contact", async (req, res, next) => {
     }
 });
 
-// GET /api/v1/products
+// ══════════════════════════════════════════════════════════════════════════════
+//  USER AUTHENTICATION
+// ══════════════════════════════════════════════════════════════════════════════
+
+// POST /api/v1/users/register
+app.post("/api/v1/users/register", async (req, res) => {
+    const body = req.body && typeof req.body === "object" ? req.body : {};
+    const { valid, errors } = validateRegisterPayload(body);
+
+    if (!valid) {
+        return res.status(400).json({
+            status: "error",
+            code: 400,
+            message: "Registration validation failed.",
+            errors,
+        });
+    }
+
+    const fullName = body.full_name.trim();
+    const email = body.email.trim().toLowerCase();
+    const phone = (typeof body.phone === "string" && body.phone.trim().length > 0)
+        ? body.phone.trim()
+        : null;
+
+    try {
+        // Hash the password BEFORE touching the DB — never store plaintext
+        const passwordHash = await bcrypt.hash(body.password, SALT_ROUNDS);
+
+        const result = await pool.query(
+            `INSERT INTO users (full_name, email, phone, password_hash)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id, full_name, email, phone, created_at;`,
+            [fullName, email, phone, passwordHash]
+        );
+
+        const user = result.rows[0];
+        console.log(`[Register] New user registered — id: ${user.id}, email: ${user.email} at ${new Date().toISOString()}`);
+
+        // ✅ Explicitly list returned fields — password_hash is never included
+        return res.status(201).json({
+            status: "success",
+            message: "Registration successful.",
+            data: {
+                id: user.id,
+                full_name: user.full_name,
+                email: user.email,
+                phone: user.phone,
+                created_at: user.created_at,
+            },
+        });
+
+    } catch (err) {
+        // pg error code 23505 = unique_violation (duplicate email)
+        if (err.code === "23505" && err.constraint === "users_email_key") {
+            console.warn(`[Register] Duplicate email attempt: "${email}" at ${new Date().toISOString()}`);
+            // ✅ Zero data leak — do NOT confirm whether the email already exists
+            return res.status(409).json({
+                status: "error",
+                code: 409,
+                message: "An account with this email already exists.",
+            });
+        }
+
+        // All other errors: log internally, return nothing useful to the client
+        console.error(`[Register] Unexpected error for email "${email}":`, err.message);
+        return res.status(500).json({
+            status: "error",
+            code: 500,
+            message: "Registration failed. Please try again later.",
+        });
+    }
+});
+
+// POST /api/v1/users/login  — rate-limited (5 attempts / 15 min per IP)
+app.post("/api/v1/users/login", loginRateLimiter, async (req, res) => {
+    const body = req.body && typeof req.body === "object" ? req.body : {};
+    const { email, password } = body;
+
+    // Basic presence check — intentionally vague to prevent user enumeration
+    if (
+        !email || typeof email !== "string" || email.trim().length === 0 ||
+        !password || typeof password !== "string" || password.trim().length === 0
+    ) {
+        return res.status(400).json({
+            status: "error",
+            code: 400,
+            message: "Email and password are required.",
+        });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    try {
+        const result = await pool.query(
+            `SELECT id, full_name, email, phone, password_hash
+             FROM users
+             WHERE email = $1;`,
+            [normalizedEmail]
+        );
+
+        // ✅ Constant-time path: always run bcrypt.compare even if user not found.
+        // Without this, an attacker can detect valid emails by measuring response
+        // time (a few ms for "not found" vs ~250 ms for bcrypt — a timing attack).
+        const DUMMY_HASH = "$2b$12$invalidhashpaddingtomakethislongenoughtoberealistic000000";
+        const storedHash = result.rows.length > 0
+            ? result.rows[0].password_hash
+            : DUMMY_HASH;
+
+        const passwordMatch = await bcrypt.compare(password, storedHash);
+
+        if (result.rows.length === 0 || !passwordMatch) {
+            console.warn(`[Login] Failed attempt — email: "${normalizedEmail}" at ${new Date().toISOString()}`);
+            // ✅ Same message whether email is wrong OR password is wrong
+            return res.status(401).json({
+                status: "error",
+                code: 401,
+                message: "Authentication failed. Invalid email or password.",
+            });
+        }
+
+        const user = result.rows[0];
+
+        const token = jwt.sign(
+            { sub: user.id, email: user.email, role: "user" },
+            JWT_SECRET,
+            { expiresIn: process.env.JWT_USER_EXPIRES_IN || "15m", algorithm: "HS256" }
+        );
+
+        console.log(`[Login] Successful login — user id: ${user.id}, email: "${user.email}" at ${new Date().toISOString()}`);
+
+        // ✅ Explicitly list returned fields — password_hash is never included
+        return res.status(200).json({
+            status: "success",
+            message: "Login successful.",
+            data: {
+                token,
+                expiresIn: process.env.JWT_USER_EXPIRES_IN || "15m",
+                user: {
+                    id: user.id,
+                    full_name: user.full_name,
+                    email: user.email,
+                    phone: user.phone,
+                },
+            },
+        });
+
+    } catch (err) {
+        // Log full error server-side, return nothing useful to the client
+        console.error(`[Login] Unexpected error for email "${normalizedEmail}":`, err.message);
+        return res.status(500).json({
+            status: "error",
+            code: 500,
+            message: "Authentication failed. Please try again later.",
+        });
+    }
+});
+
+// ── GET /api/v1/products ───────────────────────────────────────────────────────
 app.get("/api/v1/products", async (req, res, next) => {
     try {
         const result = await pool.query("SELECT * FROM products ORDER BY id ASC;");
@@ -261,7 +505,7 @@ app.get("/api/v1/products", async (req, res, next) => {
 
 const DELIVERY_FEE = 30.00;
 
-// POST /api/v1/orders
+// ── POST /api/v1/orders ────────────────────────────────────────────────────────
 app.post("/api/v1/orders", async (req, res, next) => {
     const body = req.body && typeof req.body === "object" ? req.body : {};
     const { cart, contact, address, payment } = body;
@@ -276,21 +520,16 @@ app.post("/api/v1/orders", async (req, res, next) => {
     if (!contact || typeof contact !== "object") {
         shapeErrors.push('"contact" object is required.');
     } else {
-        if (typeof contact.name !== "string" || contact.name.trim().length === 0)
-            shapeErrors.push('"contact.name" is required.');
-        if (typeof contact.email !== "string" || contact.email.trim().length === 0)
-            shapeErrors.push('"contact.email" is required.');
-        if (typeof contact.phone !== "string" || contact.phone.trim().length === 0)
-            shapeErrors.push('"contact.phone" is required.');
+        if (typeof contact.name !== "string" || contact.name.trim().length === 0) shapeErrors.push('"contact.name" is required.');
+        if (typeof contact.email !== "string" || contact.email.trim().length === 0) shapeErrors.push('"contact.email" is required.');
+        if (typeof contact.phone !== "string" || contact.phone.trim().length === 0) shapeErrors.push('"contact.phone" is required.');
     }
 
     if (!address || typeof address !== "object") {
         shapeErrors.push('"address" object is required.');
     } else {
-        if (typeof address.street !== "string" || address.street.trim().length === 0)
-            shapeErrors.push('"address.street" is required.');
-        if (typeof address.pin !== "string" || address.pin.trim().length === 0)
-            shapeErrors.push('"address.pin" is required.');
+        if (typeof address.street !== "string" || address.street.trim().length === 0) shapeErrors.push('"address.street" is required.');
+        if (typeof address.pin !== "string" || address.pin.trim().length === 0) shapeErrors.push('"address.pin" is required.');
     }
 
     if (!payment || typeof payment !== "object") {
@@ -442,7 +681,7 @@ app.post("/api/v1/orders", async (req, res, next) => {
     }
 });
 
-// POST /api/v1/admin/login  (public — no verifyAdmin)
+// ── POST /api/v1/admin/login  (public — no verifyAdmin) ───────────────────────
 app.post("/api/v1/admin/login", (req, res) => {
     const body = req.body && typeof req.body === "object" ? req.body : {};
     const { username, password } = body;
@@ -482,7 +721,7 @@ app.post("/api/v1/admin/login", (req, res) => {
     });
 });
 
-// GET /api/v1/admin/orders
+// ── GET /api/v1/admin/orders ───────────────────────────────────────────────────
 app.get("/api/v1/admin/orders", verifyAdmin, async (req, res, next) => {
     try {
         const result = await pool.query(
@@ -498,7 +737,7 @@ app.get("/api/v1/admin/orders", verifyAdmin, async (req, res, next) => {
     }
 });
 
-// GET /api/v1/admin/orders/:id
+// ── GET /api/v1/admin/orders/:id ──────────────────────────────────────────────
 app.get("/api/v1/admin/orders/:id", verifyAdmin, async (req, res, next) => {
     const orderId = parseInt(req.params.id, 10);
     if (isNaN(orderId) || orderId <= 0) {
@@ -543,7 +782,7 @@ app.get("/api/v1/admin/orders/:id", verifyAdmin, async (req, res, next) => {
     }
 });
 
-// PATCH /api/v1/admin/orders/:id/status
+// ── PATCH /api/v1/admin/orders/:id/status ─────────────────────────────────────
 app.patch("/api/v1/admin/orders/:id/status", verifyAdmin, async (req, res, next) => {
     const orderId = parseInt(req.params.id, 10);
     if (isNaN(orderId) || orderId <= 0) {
@@ -585,7 +824,7 @@ app.patch("/api/v1/admin/orders/:id/status", verifyAdmin, async (req, res, next)
     }
 });
 
-// PATCH /api/v1/admin/products/:id/stock
+// ── PATCH /api/v1/admin/products/:id/stock ────────────────────────────────────
 app.patch("/api/v1/admin/products/:id/stock", verifyAdmin, async (req, res, next) => {
     const productId = parseInt(req.params.id, 10);
     if (isNaN(productId) || productId <= 0) {
@@ -635,7 +874,7 @@ app.patch("/api/v1/admin/products/:id/stock", verifyAdmin, async (req, res, next
     }
 });
 
-// POST /api/v1/admin/products
+// ── POST /api/v1/admin/products ───────────────────────────────────────────────
 app.post("/api/v1/admin/products", verifyAdmin, async (req, res, next) => {
     const body = req.body && typeof req.body === "object" ? req.body : {};
     const validationErrors = [];
@@ -688,7 +927,7 @@ app.post("/api/v1/admin/products", verifyAdmin, async (req, res, next) => {
     }
 });
 
-// GET /api/v1/admin/messages
+// ── GET /api/v1/admin/messages ────────────────────────────────────────────────
 app.get("/api/v1/admin/messages", verifyAdmin, async (req, res, next) => {
     try {
         const conditions = [];
@@ -724,12 +963,12 @@ app.get("/api/v1/admin/messages", verifyAdmin, async (req, res, next) => {
     }
 });
 
-// 404
+// ── 404 ────────────────────────────────────────────────────────────────────────
 app.use((req, res) => {
     res.status(404).json({ status: "error", code: 404, message: `Route not found: ${req.method} ${req.originalUrl}` });
 });
 
-// Global error handler
+// ── Global error handler ───────────────────────────────────────────────────────
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
     console.error("────────────────────────────────────────");
@@ -741,16 +980,17 @@ app.use((err, req, res, next) => {
     console.error("────────────────────────────────────────");
 
     const statusCode = err.status || err.statusCode || 500;
-    const isProduction = process.env.NODE_ENV === "production";
 
+    // ✅ Stack traces are already logged to the server console above.
+    //    Never send them to the client — not even in development.
     res.status(statusCode).json({
         status: "error",
         code: statusCode,
-        message: err.message || "An unexpected internal server error occurred.",
-        ...(isProduction ? {} : { stack: err.stack }),
+        message: "An unexpected internal server error occurred.",
     });
 });
 
+// ── Start server ───────────────────────────────────────────────────────────────
 app.listen(PORT, async () => {
     console.log("╔══════════════════════════════════════════════╗");
     console.log("║       MANISH GENERAL STORE — API SERVER      ║");
