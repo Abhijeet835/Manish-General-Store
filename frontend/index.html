@@ -905,6 +905,113 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
+
+        /* ================================
+           SEARCH BAR
+        ================================ */
+        .search-bar-wrapper {
+            max-width: 1200px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .search-bar-wrapper::before {
+            content: '🔍';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        #productSearch {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            outline: none;
+            transition: border-color var(--speed) ease, box-shadow var(--speed) ease;
+        }
+
+        #productSearch:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(46, 125, 60, 0.12);
+        }
+
+        #productSearch::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* ================================
+           CATEGORY FILTERS
+        ================================ */
+        .category-filter-wrapper {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .category-btn {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.45rem 1.1rem;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: background var(--speed) ease, color var(--speed) ease,
+                border-color var(--speed) ease, box-shadow var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        .category-btn:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .category-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 10px rgba(26, 92, 42, 0.25);
+        }
+
+        /* No-results message inside the grid */
+        .no-results-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 1.5rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.7;
+        }
+
+        .no-results-msg span {
+            display: block;
+            font-size: 2.2rem;
+            margin-bottom: 0.6rem;
+        }
+
+        @media (max-width: 768px) {
+
+            .search-bar-wrapper,
+            .category-filter-wrapper {
+                padding: 0 0.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -970,6 +1077,17 @@
             <a href="#products" class="view-all" aria-label="View all products">View All →</a>
         </div>
 
+        <!-- ── Search Bar ──────────────────────────────────────────────────── -->
+        <div class="search-bar-wrapper">
+            <input type="search" id="productSearch" placeholder="Search products…" aria-label="Search products"
+                autocomplete="off">
+        </div>
+
+        <!-- ── Category Filters ────────────────────────────────────────────── -->
+        <div class="category-filter-wrapper" id="categoryFilters" role="group" aria-label="Filter by category">
+            <!-- Buttons are built dynamically from live data in buildCategoryButtons() -->
+        </div>
+
         <!-- Product cards are injected here by renderProducts() via fetchProducts() -->
         <section class="product-grid" id="product-grid" aria-label="Product listing"></section>
     </main>
@@ -1025,6 +1143,15 @@
             const toastMsgEl = document.getElementById("toastMessage");
             const menuToggle = document.getElementById("menuToggle");
             const mainNav = document.getElementById("mainNav");
+            const searchInput = document.getElementById("productSearch");
+            const categoryFilters = document.getElementById("categoryFilters");
+
+            // ── Filter state ────────────────────────────────────────────────────
+            // allProducts holds the full catalog fetched once from the API.
+            // activeCategory and searchQuery drive applyFilters().
+            let allProducts = [];
+            let activeCategory = 'All';   // 'All' = no category filter
+            let searchQuery = '';      // lower-cased live search term
 
             // ── State: load from localStorage ──────────────────────────────────
             // cart is a plain object: { [productId]: quantity }
@@ -1246,10 +1373,11 @@
                     }
 
                     // ── SUCCESS state ──────────────────────────────────────
-                    // Render cards, then immediately sync the persisted cart
-                    // state so any items already in the cart show their qty
-                    // selector without requiring a user interaction.
-                    renderProducts(json.data);
+                    // Store the full catalog, build the filter UI, then apply
+                    // the current filters (All / no search) to render cards.
+                    allProducts = json.data;
+                    buildCategoryButtons(allProducts);
+                    applyFilters();
                     syncAllCards();
 
                 } catch (err) {
@@ -1265,6 +1393,93 @@
                         </div>`;
                 }
             }
+
+            // ── buildCategoryButtons ───────────────────────────────────────────
+            // Reads the unique categories from the fetched catalog and injects
+            // one pill-button per category (plus an "All" button) into
+            // #categoryFilters. Clears any previously injected buttons first so
+            // it is safe to call again if the catalog is refreshed.
+            function buildCategoryButtons(products) {
+                const categories = ['All', ...new Set(
+                    products.map(p => p.category).filter(Boolean)
+                )];
+
+                categoryFilters.innerHTML = '';
+                categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'category-btn' + (cat === activeCategory ? ' active' : '');
+                    btn.textContent = cat;
+                    btn.setAttribute('aria-pressed', cat === activeCategory ? 'true' : 'false');
+                    btn.addEventListener('click', () => {
+                        activeCategory = cat;
+                        // Update active state on all buttons
+                        categoryFilters.querySelectorAll('.category-btn').forEach(b => {
+                            const isActive = b.textContent === activeCategory;
+                            b.classList.toggle('active', isActive);
+                            b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                        });
+                        applyFilters();
+                    });
+                    categoryFilters.appendChild(btn);
+                });
+            }
+
+            // ── applyFilters ────────────────────────────────────────────────────
+            // Combines the active category and live search query to produce the
+            // filtered product list, then renders it.
+            //
+            // Category rule : show at most 4 products when a specific category
+            //                 is selected (so the homepage never gets cluttered).
+            // Search rule   : matches against product name + description,
+            //                 case-insensitive; no per-category cap while
+            //                 searching so users can find anything they type.
+            function applyFilters() {
+                let result = allProducts;
+
+                // 1. Category filter
+                if (activeCategory !== 'All') {
+                    result = result
+                        .filter(p => p.category === activeCategory)
+                        .slice(0, 4);      // max 4 per category
+                }
+
+                // 2. Search filter (applied on top of the category result)
+                if (searchQuery.length > 0) {
+                    result = result.filter(p => {
+                        const haystack = (
+                            (p.name || '') + ' ' +
+                            (p.description || '') + ' ' +
+                            (p.category || '')
+                        ).toLowerCase();
+                        return haystack.includes(searchQuery);
+                    });
+                }
+
+                // 3. Render (or show a friendly no-results message)
+                if (result.length === 0) {
+                    grid.innerHTML = `
+                        <div class="no-results-msg">
+                            <span>🔍</span>
+                            No products found for <strong>"${escapeHTML(searchQuery || activeCategory)}"</strong>.<br>
+                            Try a different search or category.
+                        </div>`;
+                } else {
+                    renderProducts(result);
+                    syncAllCards();
+                }
+            }
+
+            // ── Debounced search input ──────────────────────────────────────────
+            // A 300 ms debounce prevents applyFilters from firing on every
+            // single keystroke when the user types quickly.
+            let searchDebounceTimer = null;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchDebounceTimer);
+                searchDebounceTimer = setTimeout(() => {
+                    searchQuery = searchInput.value.trim().toLowerCase();
+                    applyFilters();
+                }, 300);
+            });
 
             // ── Cart event delegation ──────────────────────────────────────────
             // A SINGLE click listener on the grid container handles every cart
