@@ -93,6 +93,79 @@ function verifyAdmin(req, res, next) {
     }
 }
 
+// ── Middleware: verify user JWT (hard — rejects missing/invalid tokens) ────────
+// Used for user-specific protected routes (e.g. order history).
+function verifyUser(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({
+            status: "error",
+            code: 401,
+            message: "Unauthorized: missing or malformed Authorization header.",
+        });
+    }
+    const token = authHeader.slice(7);
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        // Reject admin tokens on user-only routes
+        if (!decoded || decoded.role !== "user") {
+            return res.status(403).json({
+                status: "error",
+                code: 403,
+                message: "Forbidden: this endpoint requires a user token.",
+            });
+        }
+        req.user = decoded;
+        return next();
+    } catch (err) {
+        return res.status(401).json({
+            status: "error",
+            code: 401,
+            message: "Unauthorized: invalid or expired token.",
+        });
+    }
+}
+
+// ── Middleware: optionalAuth ───────────────────────────────────────────────────
+// For endpoints that support both authenticated and guest access (e.g. checkout).
+//
+// Behaviour:
+//   • Token present AND valid AND role === "user" → sets req.user, calls next()
+//   • Token absent                                → sets req.user = null, calls next()
+//   • Token present but expired/malformed         → sets req.user = null, calls next()
+//   • Token present but role !== "user"           → sets req.user = null, calls next()
+//
+// This middleware NEVER blocks a request. Guest checkout is always permitted.
+// The user_id written to the DB comes exclusively from this verified token —
+// it is never accepted from the request body.
+function optionalAuth(req, res, next) {
+    req.user = null; // safe default
+
+    const authHeader = req.headers["authorization"];
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        // No token supplied — guest checkout path
+        return next();
+    }
+
+    const token = authHeader.slice(7);
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        // Only honour tokens that carry a user identity.
+        // An admin token (role: "admin") must not be silently treated as a user.
+        if (decoded && decoded.role === "user" && decoded.sub) {
+            req.user = decoded;
+        } else {
+            console.warn(`[optionalAuth] Token present but role "${decoded?.role}" is not "user" — treating as guest.`);
+        }
+    } catch (err) {
+        // Expired or tampered token — treat as guest, never block.
+        // Log server-side for observability but do not leak the reason to the client.
+        console.warn(`[optionalAuth] Token verification failed (${err.name}) — treating as guest.`);
+    }
+
+    return next();
+}
+
 // ── Database initialisation ────────────────────────────────────────────────────
 async function initializeDatabase() {
     let client;
@@ -139,10 +212,36 @@ async function initializeDatabase() {
         `);
         console.log("[DB Init] products table is ready.");
 
+        // ── users ──────────────────────────────────────────────────────────────
+        // Must be created BEFORE orders so the FK reference resolves.
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id            SERIAL        PRIMARY KEY,
+                full_name     VARCHAR(255)  NOT NULL,
+                email         VARCHAR(255)  NOT NULL UNIQUE,
+                phone         VARCHAR(20)   NULL,
+                password_hash VARCHAR(255)  NOT NULL,
+                created_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+            );
+        `);
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_users_email
+                ON users (email);
+        `);
+        console.log("[DB Init] users table is ready.");
+
         // orders
+        // user_id is nullable: NULL  → guest order
+        //                      INT   → authenticated order linked to a user account
+        //
+        // ON DELETE SET NULL: if a user account is deleted, their historical
+        // orders are preserved (anonymised) rather than cascade-deleted.
+        // This is the correct behaviour for financial/fulfilment records.
         await client.query(`
             CREATE TABLE IF NOT EXISTS orders (
                 id             SERIAL        PRIMARY KEY,
+                user_id        INT           NULL
+                                             REFERENCES users(id) ON DELETE SET NULL,
                 customer_name  VARCHAR(255)  NOT NULL,
                 email          VARCHAR(255)  NOT NULL,
                 phone          VARCHAR(20)   NOT NULL,
@@ -154,7 +253,23 @@ async function initializeDatabase() {
                 created_at     TIMESTAMPTZ   NOT NULL DEFAULT NOW()
             );
         `);
-        console.log("[DB Init] orders table is ready.");
+
+        // ── Phase 5 migration: add user_id to the orders table if it was
+        //    created by an earlier version of this server that did not have it.
+        //    ADD COLUMN IF NOT EXISTS is idempotent — safe to run on every boot.
+        await client.query(`
+            ALTER TABLE orders
+                ADD COLUMN IF NOT EXISTS user_id INT NULL
+                    REFERENCES users(id) ON DELETE SET NULL;
+        `);
+
+        // Index on user_id so that "fetch orders for user X" queries are fast.
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_orders_user_id
+                ON orders (user_id)
+                WHERE user_id IS NOT NULL;
+        `);
+        console.log("[DB Init] orders table is ready (with user_id FK support).");
 
         // order_items
         await client.query(`
@@ -172,23 +287,6 @@ async function initializeDatabase() {
                 ON order_items (order_id);
         `);
         console.log("[DB Init] order_items table is ready.");
-
-        // ── users ──────────────────────────────────────────────────────────────
-        await client.query(`
-            CREATE TABLE IF NOT EXISTS users (
-                id            SERIAL        PRIMARY KEY,
-                full_name     VARCHAR(255)  NOT NULL,
-                email         VARCHAR(255)  NOT NULL UNIQUE,
-                phone         VARCHAR(20)   NULL,
-                password_hash VARCHAR(255)  NOT NULL,
-                created_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW()
-            );
-        `);
-        await client.query(`
-            CREATE INDEX IF NOT EXISTS idx_users_email
-                ON users (email);
-        `);
-        console.log("[DB Init] users table is ready.");
 
     } catch (err) {
         console.error("[DB Init] FATAL: Could not initialise the database.");
@@ -506,7 +604,26 @@ app.get("/api/v1/products", async (req, res, next) => {
 const DELIVERY_FEE = 30.00;
 
 // ── POST /api/v1/orders ────────────────────────────────────────────────────────
-app.post("/api/v1/orders", async (req, res, next) => {
+//
+// Phase 5 — Authenticated Checkout
+//
+// Supports both guest and authenticated checkout from a single endpoint.
+//
+// Guest checkout    : No Authorization header (or invalid token).
+//                     req.user === null → user_id column saved as NULL.
+//
+// Authenticated     : Valid "Bearer <user-jwt>" header.
+//                     req.user.sub (user id from token) → user_id saved to order row.
+//
+// Security guarantees:
+//   • user_id is NEVER taken from the request body — it comes only from the
+//     verified JWT via optionalAuth. A client cannot claim to be another user.
+//   • Only tokens with role === "user" are accepted. Admin tokens are rejected
+//     by optionalAuth and treated as guest requests.
+//   • A tampered, expired, or replayed token falls back to guest silently.
+//     The checkout is never blocked because of a bad token.
+//
+app.post("/api/v1/orders", optionalAuth, async (req, res, next) => {
     const body = req.body && typeof req.body === "object" ? req.body : {};
     const { cart, contact, address, payment } = body;
     const shapeErrors = [];
@@ -541,6 +658,14 @@ app.post("/api/v1/orders", async (req, res, next) => {
     if (shapeErrors.length > 0) {
         return res.status(400).json({ status: "error", code: 400, message: "Order validation failed.", errors: shapeErrors });
     }
+
+    // ── Resolve authenticated user id (or null for guest) ──────────────────────
+    // req.user is set by optionalAuth. It is null if no valid user token was
+    // provided. We parse to integer defensively even though jwt.sign uses
+    // integer sub values — this prevents prototype-pollution edge cases.
+    const authenticatedUserId = req.user
+        ? (Number.isInteger(req.user.sub) ? req.user.sub : parseInt(req.user.sub, 10))
+        : null;
 
     const orderContact = {
         name: contact.name.trim(),
@@ -613,23 +738,37 @@ app.post("/api/v1/orders", async (req, res, next) => {
         console.log("════════════════════════════════════════════════");
         console.log("[POST /api/v1/orders] New Order Submission");
         console.log("────────────────────────────────────────────────");
-        console.log(`  Timestamp : ${new Date().toISOString()}`);
-        console.log(`  Customer  : ${orderContact.name} <${orderContact.email}>`);
-        console.log(`  Phone     : ${orderContact.phone}`);
-        console.log(`  Address   : ${orderAddress.street}, PIN ${orderAddress.pin}`);
-        console.log(`  Payment   : ${paymentMethod}`);
-        console.log(`  Lines     : ${validatedCartLines.length} item(s)`);
-        console.log(`  Subtotal  : ₹${subtotal.toFixed(2)}`);
-        console.log(`  Delivery  : ₹${DELIVERY_FEE.toFixed(2)}`);
-        console.log(`  Total     : ₹${totalAmount.toFixed(2)}`);
+        console.log(`  Timestamp  : ${new Date().toISOString()}`);
+        console.log(`  Auth       : ${authenticatedUserId ? `user_id ${authenticatedUserId}` : "guest (unauthenticated)"}`);
+        console.log(`  Customer   : ${orderContact.name} <${orderContact.email}>`);
+        console.log(`  Phone      : ${orderContact.phone}`);
+        console.log(`  Address    : ${orderAddress.street}, PIN ${orderAddress.pin}`);
+        console.log(`  Payment    : ${paymentMethod}`);
+        console.log(`  Lines      : ${validatedCartLines.length} item(s)`);
+        console.log(`  Subtotal   : ₹${subtotal.toFixed(2)}`);
+        console.log(`  Delivery   : ₹${DELIVERY_FEE.toFixed(2)}`);
+        console.log(`  Total      : ₹${totalAmount.toFixed(2)}`);
         console.log("════════════════════════════════════════════════");
 
+        // ── Insert order row ────────────────────────────────────────────────────
+        // user_id is the final ($8) parameter. It is NULL for guests and the
+        // verified user id for authenticated users. It is never supplied by the
+        // client body — only from the verified JWT.
         const insertOrderResult = await client.query(
             `INSERT INTO orders
-                (customer_name, email, phone, address, pin_code, payment_method, total_amount)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
+                (customer_name, email, phone, address, pin_code, payment_method, total_amount, user_id)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
              RETURNING id;`,
-            [orderContact.name, orderContact.email, orderContact.phone, orderAddress.street, orderAddress.pin, paymentMethod, totalAmount]
+            [
+                orderContact.name,
+                orderContact.email,
+                orderContact.phone,
+                orderAddress.street,
+                orderAddress.pin,
+                paymentMethod,
+                totalAmount,
+                authenticatedUserId,   // NULL for guests, integer for logged-in users
+            ]
         );
 
         const newOrderId = insertOrderResult.rows[0].id;
@@ -663,7 +802,7 @@ app.post("/api/v1/orders", async (req, res, next) => {
         }
 
         await client.query("COMMIT");
-        console.log(`[DB] Order #${newOrderId} committed — ${validatedCartLines.length} item(s), total ₹${totalAmount.toFixed(2)}`);
+        console.log(`[DB] Order #${newOrderId} committed — ${validatedCartLines.length} item(s), total ₹${totalAmount.toFixed(2)}, user_id: ${authenticatedUserId ?? "null (guest)"}`);
 
         return res.status(201).json({ status: "success", data: { order_id: newOrderId } });
 
@@ -678,6 +817,97 @@ app.post("/api/v1/orders", async (req, res, next) => {
         return next(err);
     } finally {
         client.release();
+    }
+});
+
+// ── GET /api/v1/users/me/orders ───────────────────────────────────────────────
+//
+// Returns the authenticated user's own order history, newest first.
+// Each order includes its full line items.
+//
+// Requires a valid "Bearer <user-jwt>" Authorization header.
+// Returns 401 if the token is missing, expired, or invalid.
+// Returns 403 if the token belongs to an admin (role !== "user").
+//
+app.get("/api/v1/users/me/orders", verifyUser, async (req, res, next) => {
+    // req.user.sub is the user id embedded in the JWT at login time.
+    const userId = Number.isInteger(req.user.sub)
+        ? req.user.sub
+        : parseInt(req.user.sub, 10);
+
+    if (isNaN(userId) || userId <= 0) {
+        // This should never happen with a correctly issued token, but defend anyway.
+        return res.status(401).json({
+            status: "error",
+            code: 401,
+            message: "Unauthorized: token contains an invalid user identity.",
+        });
+    }
+
+    try {
+        // Fetch all orders that belong to this user
+        const ordersResult = await pool.query(
+            `SELECT id, customer_name, email, phone, address, pin_code,
+                    payment_method, total_amount, status, created_at
+             FROM orders
+             WHERE user_id = $1
+             ORDER BY created_at DESC;`,
+            [userId]
+        );
+
+        // For each order, fetch its line items in a single additional query
+        // (avoids N+1 by batching on order ids)
+        const orders = ordersResult.rows;
+
+        if (orders.length === 0) {
+            return res.status(200).json({ status: "success", count: 0, data: [] });
+        }
+
+        const orderIds = orders.map((o) => o.id);
+
+        // Parameterised ANY($1) with an array is safe from SQL injection
+        const itemsResult = await pool.query(
+            `SELECT
+                oi.order_id,
+                oi.id,
+                oi.product_id,
+                COALESCE(p.name, 'Product #' || oi.product_id) AS product_name,
+                oi.quantity,
+                oi.price_at_purchase
+             FROM order_items oi
+             LEFT JOIN products p ON p.id = oi.product_id
+             WHERE oi.order_id = ANY($1)
+             ORDER BY oi.order_id DESC, oi.id ASC;`,
+            [orderIds]
+        );
+
+        // Group items by order_id for efficient assembly
+        const itemsByOrderId = {};
+        for (const item of itemsResult.rows) {
+            if (!itemsByOrderId[item.order_id]) {
+                itemsByOrderId[item.order_id] = [];
+            }
+            // Remove the grouping key from the item payload
+            const { order_id, ...itemData } = item;
+            itemsByOrderId[order_id].push(itemData);
+        }
+
+        const enrichedOrders = orders.map((order) => ({
+            ...order,
+            items: itemsByOrderId[order.id] || [],
+        }));
+
+        console.log(`[GET /api/v1/users/me/orders] user_id ${userId} fetched ${enrichedOrders.length} order(s).`);
+
+        return res.status(200).json({
+            status: "success",
+            count: enrichedOrders.length,
+            data: enrichedOrders,
+        });
+
+    } catch (err) {
+        err.message = `[DB] Failed to fetch orders for user #${userId}: ${err.message}`;
+        return next(err);
     }
 });
 
@@ -725,7 +955,7 @@ app.post("/api/v1/admin/login", (req, res) => {
 app.get("/api/v1/admin/orders", verifyAdmin, async (req, res, next) => {
     try {
         const result = await pool.query(
-            `SELECT id, customer_name, email, phone, address, pin_code,
+            `SELECT id, user_id, customer_name, email, phone, address, pin_code,
                     payment_method, total_amount, status, created_at
              FROM orders
              ORDER BY created_at DESC;`
@@ -746,7 +976,7 @@ app.get("/api/v1/admin/orders/:id", verifyAdmin, async (req, res, next) => {
 
     try {
         const orderResult = await pool.query(
-            `SELECT id, customer_name, email, phone, address, pin_code,
+            `SELECT id, user_id, customer_name, email, phone, address, pin_code,
                     payment_method, total_amount, status, created_at
              FROM orders
              WHERE id = $1;`,
