@@ -887,7 +887,7 @@
         // Returns the matching product object, or null if not found / on error.
         async function fetchProductDetails(id) {
             try {
-                const res = await fetch("http://localhost:5000/api/v1/products");
+                const res = await fetch("https://manish-general-store-api.onrender.com/api/v1/products");
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const json = await res.json();
 
