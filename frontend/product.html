@@ -933,6 +933,12 @@
 
     <script>
 
+        // ── API Base URL ──────────────────────────────────────────────────────────
+        // ⚠️  UPDATE THIS to your actual API service URL on Render.
+        // Your API is a separate Render service — NOT the same domain as the frontend.
+        // Example: 'https://manish-general-store-api.onrender.com'
+        const API_BASE = 'https://manish-general-store-api.onrender.com';
+
         // ── fetchProductDetails ───────────────────────────────────────────────────
         // Fetches a single product directly by its id from the live API.
         // Uses the single-product endpoint so pagination never causes a miss.
@@ -943,7 +949,7 @@
         // Returns the product object, or null if not found / on error.
         async function fetchProductDetails(id) {
             try {
-                const res = await fetch(`https://manishgeneralstore.onrender.com/api/v1/products/${encodeURIComponent(id)}`);
+                const res = await fetch(`${API_BASE}/api/v1/products/${encodeURIComponent(id)}`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const json = await res.json();
 
@@ -1010,9 +1016,14 @@
             document.getElementById('breadcrumbName').textContent = product.name;
 
             // Image — fall back to placeholder if image_url is absent or empty
+            // FIX: also prefix relative URLs with API_BASE so images load correctly
             const prodImg = document.getElementById('prodImg');
-            prodImg.src = (product.image_url && product.image_url.trim())
-                ? product.image_url
+            let imageUrl = product.image_url && product.image_url.trim();
+            if (imageUrl && !imageUrl.startsWith('http')) {
+                imageUrl = API_BASE + (imageUrl.startsWith('/') ? '' : '/') + imageUrl;
+            }
+            prodImg.src = imageUrl
+                ? imageUrl
                 : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='340' viewBox='0 0 380 340'%3E%3Crect width='380' height='340' fill='%23f0f7ec'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='18' fill='%234caf50'%3ENo Image%3C/text%3E%3C/svg%3E";
             prodImg.alt = product.name;
 
@@ -1028,7 +1039,12 @@
 
             document.getElementById('prodName').textContent = product.name;
             document.getElementById('prodDesc').textContent = product.description || '';
-            document.getElementById('packSizeDisplay').textContent = 'Standard Pack';
+            // FIX: show actual stock quantity if available
+            const stockQtyDisplay = parseInt(product.stock_quantity, 10);
+            document.getElementById('packSizeDisplay').textContent =
+                (!isNaN(stockQtyDisplay) && stockQtyDisplay > 0)
+                    ? `Standard Pack · ${stockQtyDisplay} in stock`
+                    : 'Standard Pack';
 
             // Price — MRP and discount columns don't exist yet; hide both elements
             // FIX: format price properly (e.g. ₹29.00 not ₹29)
@@ -1150,7 +1166,8 @@
                     return;
                 }
 
-                cart[productId] = 1;
+                // FIX: increment instead of resetting to 1 (was: cart[productId] = 1)
+                cart[productId] = (cart[productId] || 0) + 1;
                 saveCart();
                 syncUI();
                 showToast(`${product.name} added to cart!`);
@@ -1242,7 +1259,7 @@
 
                     // Fire-and-forget backend revocation — do NOT await
                     if (token) {
-                        fetch('https://manishgeneralstore.onrender.com/api/v1/users/logout', {
+                        fetch(`${API_BASE}/api/v1/users/logout`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
