@@ -931,6 +931,24 @@
         // ── Config ────────────────────────────────────────────────────────────
         const API_BASE = 'https://manish-general-store-api.onrender.com/api/v1';
 
+        // ── Redirect if already logged in ─────────────────────────────────────
+        // Mirrors the same guard in user-login.html — no reason to register if
+        // the user already has a valid, non-expired session.
+        (function checkAlreadyLoggedIn() {
+            try {
+                const token = localStorage.getItem('user_jwt');
+                const userData = localStorage.getItem('user_data');
+                if (!token || !userData) return;
+                const payloadBase64 = token.split('.')[1];
+                if (!payloadBase64) return;
+                const payload = JSON.parse(atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/')));
+                const nowSec = Math.floor(Date.now() / 1000);
+                if (payload.exp && payload.exp > nowSec) {
+                    window.location.replace('index.html');
+                }
+            } catch (e) { /* malformed token — show register page */ }
+        })();
+
         // ── Cart badge sync ───────────────────────────────────────────────────
         (function syncCartBadge() {
             try {
@@ -1014,7 +1032,8 @@
         }
 
         function isValidPhone(val) {
-            return /^(\+91|0)?[6-9]\d{9}$/.test(val.replace(/\s/g, ''));
+            // Accept bare 10-digit (most common), optionally prefixed with +91 or 0
+            return /^(\+91|0)?[6-9]\d{9}$/.test(val.replace(/[\s\-()]/g, ''));
         }
 
         function setFieldState(input, errorEl, isValid, msg) {
@@ -1038,7 +1057,7 @@
 
         const STRENGTH_LEVELS = [
             { min: 0, max: 30, label: 'Weak', color: '#e8501a', width: '25%' },
-            { min: 30, max: 60, label: 'Fair', color: '--gold', width: '50%' },
+            { min: 30, max: 60, label: 'Fair', color: '#f5a623', width: '50%' },
             { min: 60, max: 80, label: 'Good', color: '#2e7d3c', width: '75%' },
             { min: 80, max: 101, label: 'Strong ✓', color: '#1a5c2a', width: '100%' },
         ];
@@ -1060,11 +1079,9 @@
             const score = scorePassword(pwd);
             const level = STRENGTH_LEVELS.find(l => score >= l.min && score < l.max) || STRENGTH_LEVELS[3];
             strengthBarFill.style.width = level.width;
-            strengthBarFill.style.background = level.color.startsWith('--')
-                ? getComputedStyle(document.documentElement).getPropertyValue(level.color).trim()
-                : level.color;
+            strengthBarFill.style.background = level.color;
             strengthLabel.textContent = 'Strength: ' + level.label;
-            strengthLabel.style.color = strengthBarFill.style.background;
+            strengthLabel.style.color = level.color;
         }
 
         // ── DOM refs ──────────────────────────────────────────────────────────

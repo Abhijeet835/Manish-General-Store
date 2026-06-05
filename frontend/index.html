@@ -226,11 +226,20 @@
         .account-btn--logout {
             background: rgba(232, 80, 26, 0.15);
             border-color: rgba(232, 80, 26, 0.40);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
         }
 
         .account-btn--logout:hover {
             background: rgba(232, 80, 26, 0.28) !important;
             border-color: rgba(232, 80, 26, 0.65) !important;
+        }
+
+        /* Greeting variant — non-clickable, no hover effect */
+        .account-btn--greeting {
+            opacity: 0.92;
         }
 
         /* Hamburger menu toggle */
@@ -1082,15 +1091,17 @@
             <a href="index.html" class="active" aria-current="page">Home</a>
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
-            <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
-                <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    aria-hidden="true">
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                </svg>
-                <span class="account-btn__label" id="accountBtnLabel">Sign In</span>
-            </a>
+            <span id="navAccountArea" style="display:contents;">
+                <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
+                    <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                    </svg>
+                    <span class="account-btn__label" id="accountBtnLabel">Sign In</span>
+                </a>
+            </span>
             <a href="cart.html" class="cart-link" aria-label="Cart">
                 <span class="cart-icon">🛒</span>
                 Cart
@@ -1222,13 +1233,20 @@
             loadCart();
 
             // ── Auth: update header account button ─────────────────────────────
-            // Reads the session tokens written by user-login.html.
-            // If a valid JWT exists the button becomes a personalised logout;
-            // if not, it stays as the plain Sign In link.
-            (function initAccountButton() {
-                const accountBtn = document.getElementById('accountBtn');
-                const accountLabel = document.getElementById('accountBtnLabel');
-                if (!accountBtn) return;
+            // Named function (not IIFE) so it can be re-called on bfcache restore.
+            // FIX: Wraps the nav slot in #navAccountArea and uses innerHTML so the
+            // container node stays in the DOM — outerHTML detaches the node and
+            // prevents re-calling this function after logout + bfcache restore.
+            function isJwtExpired(jwt) {
+                try {
+                    const payload = JSON.parse(atob(jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                    return payload.exp ? payload.exp <= Math.floor(Date.now() / 1000) : false;
+                } catch { return true; }
+            }
+
+            function initAccountButton() {
+                const area = document.getElementById('navAccountArea');
+                if (!area) return;
 
                 let userData = null;
                 try {
@@ -1237,38 +1255,84 @@
                 } catch { userData = null; }
 
                 const jwt = localStorage.getItem('user_jwt');
-                const isLoggedIn = !!(jwt && userData);
+                // FIX: treat expired JWT as logged-out
+                const isLoggedIn = !!(jwt && userData && !isJwtExpired(jwt));
 
-                if (isLoggedIn) {
-                    // Derive a friendly first name (fall back gracefully)
-                    const firstName = (
-                        userData.first_name ||
-                        userData.firstName ||
-                        userData.name?.split(' ')[0] ||
-                        userData.email?.split('@')[0] ||
-                        'You'
-                    );
-
-                    // Switch to logout appearance
-                    accountBtn.removeAttribute('href');
-                    accountBtn.setAttribute('role', 'button');
-                    accountBtn.setAttribute('aria-label', `Signed in as ${firstName}. Click to log out.`);
-                    accountBtn.classList.add('account-btn--logout');
-                    accountLabel.textContent = `Hi, ${firstName} — Log out`;
-
-                    accountBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
+                if (!isLoggedIn) {
+                    // Clear any stale data silently
+                    if (jwt || userData) {
                         localStorage.removeItem('user_jwt');
+                        localStorage.removeItem('user_refresh_token');
                         localStorage.removeItem('user_data');
-                        showToast('You\'ve been signed out. See you soon!');
-                        setTimeout(() => location.reload(), 1600);
-                    });
+                    }
+                    // Render the default Sign In link
+                    area.innerHTML = `
+                        <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
+                            <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                            </svg>
+                            <span class="account-btn__label">Sign In</span>
+                        </a>`;
+                    return;
                 }
-                // If not logged in: keep the default href="user-login.html" and label "Sign In"
-            })();
+
+                const firstName = (
+                    userData.full_name?.split(' ')[0] ||
+                    userData.email?.split('@')[0] ||
+                    'You'
+                );
+
+                area.innerHTML = `
+                    <span class="account-btn account-btn--greeting" aria-label="Signed in as ${firstName}" style="cursor:default;">
+                        <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                        </svg>
+                        Hi, ${firstName}
+                    </span>
+                    <button class="account-btn account-btn--logout" id="logoutBtn" aria-label="Log out">
+                        Log out
+                    </button>`;
+
+                document.getElementById('logoutBtn').addEventListener('click', async () => {
+                    const btn = document.getElementById('logoutBtn');
+                    if (btn) { btn.disabled = true; btn.textContent = 'Signing out…'; }
+
+                    const token = localStorage.getItem('user_jwt');
+                    const refreshToken = localStorage.getItem('user_refresh_token');
+
+                    if (token) {
+                        try {
+                            await fetch('https://manish-general-store-api.onrender.com/api/v1/users/logout', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`,
+                                },
+                                body: JSON.stringify({ refreshToken: refreshToken || '' }),
+                            });
+                        } catch (err) {
+                            console.warn('[Logout] Backend revoke failed (non-fatal):', err.message);
+                        }
+                    }
+
+                    localStorage.removeItem('user_jwt');
+                    localStorage.removeItem('user_refresh_token');
+                    localStorage.removeItem('user_data');
+                    showToast('You\'ve been signed out. See you soon!');
+                    // FIX: Use location.replace instead of reload to prevent bfcache
+                    // serving the stale logged-in page on back-navigation.
+                    setTimeout(() => window.location.replace('index.html'), 1600);
+                });
+            }
+
+            initAccountButton();
 
             function saveCart() {
-                // TODO: Replace with backend API POST request in Phase 10
+                // Guest cart: persisted in localStorage.
+                // For logged-in users, the backend cart is the source of truth.
+                // Full backend sync (PUT /api/v1/cart) will be wired up in cart.html.
                 localStorage.setItem('manishCartState', JSON.stringify(cart));
             }
 
@@ -1670,8 +1734,19 @@
             // fire in that case, so this is the only reliable hook.
             // storage fires when another tab writes to localStorage, keeping
             // the cart badge in sync across multiple open tabs.
-            window.addEventListener('pageshow', () => { loadCart(); syncAllCards(); });
-            window.addEventListener('storage', () => { loadCart(); syncAllCards(); });
+            // FIX: Re-run auth header check on bfcache restore so that a logged-out
+            // user who presses Back doesn't see the stale "Hi, Name / Log out" UI.
+            window.addEventListener('pageshow', (e) => {
+                loadCart();
+                syncAllCards();
+                if (e.persisted) initAccountButton();
+            });
+            window.addEventListener('storage', (e) => {
+                loadCart();
+                syncAllCards();
+                // Re-check auth if JWT was cleared in another tab
+                if (e.key === 'user_jwt' || e.key === 'user_data') initAccountButton();
+            });
 
             // ── Bootstrap ──────────────────────────────────────────────────────
             // Kick off the async product fetch. The loading spinner is shown

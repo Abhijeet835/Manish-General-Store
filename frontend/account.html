@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="My Account — Manish General Store">
+    <meta name="robots" content="noindex, nofollow">
+    <title>My Account | Manish General Store</title>
+    <link rel="icon" type="image/png"
+        href="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ================================================================
+           DESIGN SYSTEM
+        ================================================================ */
+        :root {
+            --primary: #1a5c2a;
+            --primary-light: #2e7d3c;
+            --primary-hover: #134520;
+            --accent: #e8501a;
+            --accent-light: #ff6b35;
+            --bg: #f4f8f2;
+            --bg-pattern: #eaf2e5;
+            --card-bg: #ffffff;
+            --text: #1c2b1e;
+            --text-muted: #6b7c6e;
+            --border: #d4e8ca;
+            --gold: #f5a623;
+            --speed: 0.3s;
+            --radius: 14px;
+            --shadow-card: 0 2px 16px rgba(26, 92, 42, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 16px 40px rgba(26, 92, 42, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
+
+            --status-pending-bg: #fff8e6;
+            --status-pending-fg: #92600a;
+            --status-pending-bd: #f5d78e;
+            --status-processing-bg: #e8f0fe;
+            --status-processing-fg: #1a56a0;
+            --status-processing-bd: #b3cdf8;
+            --status-shipped-bg: #e6f0ff;
+            --status-shipped-fg: #2350a0;
+            --status-shipped-bd: #a0bff5;
+            --status-delivered-bg: #e8f5ec;
+            --status-delivered-fg: #1a5c2a;
+            --status-delivered-bd: #a8d8b4;
+            --status-cancelled-bg: #fef0ee;
+            --status-cancelled-fg: #b92c18;
+            --status-cancelled-bd: #f5b4aa;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(46, 125, 60, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(46, 125, 60, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ================================================================
+           HEADER
+        ================================================================ */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            height: 70px;
+            box-shadow: 0 4px 20px rgba(26, 92, 42, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+        }
+
+        .logo-sub {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-top: 1px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            transition: background var(--speed) ease, color var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .cart-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 0.45rem 1rem !important;
+            border-radius: 20px !important;
+            position: relative;
+        }
+
+        .cart-link:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+        }
+
+        .cart-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            transform: scale(0);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .cart-badge.visible {
+            transform: scale(1);
+        }
+
+        .account-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            color: rgba(255, 255, 255, 0.92) !important;
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            padding: 0.42rem 1.05rem !important;
+            border-radius: 20px !important;
+            text-decoration: none;
+            transition: background var(--speed) ease, border-color var(--speed) ease,
+                color var(--speed) ease, box-shadow var(--speed) ease;
+            white-space: nowrap;
+        }
+
+        .account-btn:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+            border-color: rgba(255, 255, 255, 0.55) !important;
+            color: #fff !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .account-btn__icon {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            opacity: 0.9;
+        }
+
+        /* FIX: logout button in header needs these explicit resets */
+        .account-btn--logout {
+            background: rgba(232, 80, 26, 0.15);
+            border-color: rgba(232, 80, 26, 0.40);
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+        }
+
+        .account-btn--logout:hover {
+            background: rgba(232, 80, 26, 0.28) !important;
+            border-color: rgba(232, 80, 26, 0.65) !important;
+        }
+
+        /* Active state for My Account nav link */
+        .account-btn--active-page {
+            background: rgba(255, 255, 255, 0.20) !important;
+            border-color: rgba(255, 255, 255, 0.50) !important;
+            color: #fff !important;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hamburger "X" animation */
+        .menu-toggle.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .menu-toggle.open span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .menu-toggle.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* ================================================================
+           MAIN CONTENT WRAPPER
+        ================================================================ */
+        main {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            padding: 2.5rem 2rem 5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ================================================================
+           PAGE SKELETON
+        ================================================================ */
+        #pageSkeleton {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .skel-block {
+            background: linear-gradient(90deg, var(--border) 25%, var(--bg-pattern) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            border-radius: var(--radius);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* ================================================================
+           ACCOUNT CONTENT
+        ================================================================ */
+        #accountContent {
+            display: none;
+        }
+
+        /* ── Profile Hero ──────────────────────────────────────────── */
+        .profile-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius);
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            box-shadow: var(--shadow-hover);
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeSlideUp 0.5s ease 0.1s forwards;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-left {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2.5px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: #fff;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+
+        .profile-info {
+            color: #fff;
+        }
+
+        .profile-greeting {
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-bottom: 4px;
+        }
+
+        .profile-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.55rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Member since badge */
+        .profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 0.2rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .signout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 0.6rem 1.3rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background var(--speed) ease, border-color var(--speed) ease,
+                box-shadow var(--speed) ease, transform 0.15s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .signout-btn:hover {
+            background: rgba(232, 80, 26, 0.30);
+            border-color: rgba(232, 80, 26, 0.65);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(232, 80, 26, 0.25);
+        }
+
+        .signout-btn:active {
+            transform: scale(0.97);
+        }
+
+        .signout-btn svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        /* ── Stats Row (NEW) ──────────────────────────────────────── */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: fadeSlideUp 0.5s ease 0.15s forwards;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            box-shadow: var(--shadow-card);
+            transition: box-shadow var(--speed) ease, transform var(--speed) ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(26, 92, 42, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .stat-info {}
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 3px;
+        }
+
+        /* ── Section headings ─────────────────────────────────────── */
+        .orders-section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeSlideUp 0.5s ease 0.2s forwards;
+        }
+
+        .orders-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .orders-count-pill {
+            font-size: 0.78rem;
+            font-weight: 700;
+            background: var(--primary);
+            color: #fff;
+            padding: 0.2rem 0.65rem;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── Orders list wrapper ──────────────────────────────────── */
+        #ordersContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* ── Order Card ───────────────────────────────────────────── */
+        .order-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeSlideUp 0.45s ease forwards;
+            transition: box-shadow var(--speed) ease, transform var(--speed) ease;
+        }
+
+        .order-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-3px);
+        }
+
+        /* Staggered entrance — handled inline via JS for n>6 safety */
+        .order-card:nth-child(1) {
+            animation-delay: 0.25s;
+        }
+
+        .order-card:nth-child(2) {
+            animation-delay: 0.32s;
+        }
+
+        .order-card:nth-child(3) {
+            animation-delay: 0.39s;
+        }
+
+        .order-card:nth-child(4) {
+            animation-delay: 0.46s;
+        }
+
+        .order-card:nth-child(5) {
+            animation-delay: 0.53s;
+        }
+
+        .order-card:nth-child(6) {
+            animation-delay: 0.60s;
+        }
+
+        .order-card:nth-child(n+7) {
+            animation-delay: 0.65s;
+        }
+
+        /* Card header row */
+        .order-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.1rem 1.5rem;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .order-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .order-id {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .order-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .order-header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .order-total {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* ── Status Badge ─────────────────────────────────────────── */
+        .status-badge {
+            font-size: 0.73rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 0.28rem 0.8rem;
+            border-radius: 20px;
+            border-width: 1px;
+            border-style: solid;
+            white-space: nowrap;
+        }
+
+        .status-badge--pending {
+            background: var(--status-pending-bg);
+            color: var(--status-pending-fg);
+            border-color: var(--status-pending-bd);
+        }
+
+        .status-badge--processing {
+            background: var(--status-processing-bg);
+            color: var(--status-processing-fg);
+            border-color: var(--status-processing-bd);
+        }
+
+        .status-badge--shipped {
+            background: var(--status-shipped-bg);
+            color: var(--status-shipped-fg);
+            border-color: var(--status-shipped-bd);
+        }
+
+        .status-badge--delivered {
+            background: var(--status-delivered-bg);
+            color: var(--status-delivered-fg);
+            border-color: var(--status-delivered-bd);
+        }
+
+        .status-badge--cancelled {
+            background: var(--status-cancelled-bg);
+            color: var(--status-cancelled-fg);
+            border-color: var(--status-cancelled-bd);
+        }
+
+        .status-badge--pending::before,
+        .status-badge--processing::before,
+        .status-badge--shipped::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+            animation: pulse-dot 1.6s ease-in-out infinite;
+        }
+
+        .status-badge--pending::before {
+            background: var(--status-pending-fg);
+        }
+
+        .status-badge--processing::before {
+            background: var(--status-processing-fg);
+        }
+
+        .status-badge--shipped::before {
+            background: var(--status-shipped-fg);
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.45;
+                transform: scale(0.7);
+            }
+        }
+
+        /* ── Items list ───────────────────────────────────────────── */
+        .order-items {
+            padding: 1.1rem 1.5rem 1.3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .order-item-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text);
+            font-weight: 500;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .order-item-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            flex-shrink: 0;
+            opacity: 0.6;
+        }
+
+        .order-item-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .order-item-qty {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .order-item-price {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .items-more-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            padding-top: 0.2rem;
+        }
+
+        /* ── Expandable items toggle (NEW) ────────────────────────── */
+        .expand-items-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            padding: 0.2rem 0;
+            margin-top: 0.25rem;
+            transition: opacity 0.2s;
+        }
+
+        .expand-items-btn:hover {
+            opacity: 0.7;
+        }
+
+        /* ── Loading spinner ──────────────────────────────────────── */
+        .orders-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 4rem 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: spin 0.75s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Retry button (NEW — shown with error state) ──────────── */
+        .retry-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 1rem;
+            background: var(--primary);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            padding: 0.55rem 1.25rem;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: background var(--speed) ease, transform 0.15s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* ── Error state ──────────────────────────────────────────── */
+        .orders-error {
+            background: #fff5f5;
+            border: 1px solid #f5b4aa;
+            border-radius: var(--radius);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--status-cancelled-fg);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .orders-error p {
+            margin-top: 0.4rem;
+            font-size: 0.85rem;
+            opacity: 0.75;
+        }
+
+        /* ── Empty State ──────────────────────────────────────────── */
+        .empty-orders {
+            background: var(--card-bg);
+            border: 1.5px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .empty-orders-icon {
+            font-size: 3.5rem;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .empty-orders h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .empty-orders p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 340px;
+            line-height: 1.65;
+        }
+
+        .empty-shop-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 0.75rem;
+            background: var(--primary);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 0.75rem 1.75rem;
+            border-radius: 30px;
+            text-decoration: none;
+            letter-spacing: 0.2px;
+            box-shadow: 0 4px 16px rgba(26, 92, 42, 0.25);
+            transition: background var(--speed) ease, transform 0.15s ease, box-shadow var(--speed) ease;
+        }
+
+        .empty-shop-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 92, 42, 0.3);
+        }
+
+        .empty-shop-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ================================================================
+           TOAST
+        ================================================================ */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--primary);
+            color: #fff;
+            padding: 0.85rem 1.4rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(26, 92, 42, 0.3);
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 300px;
+            transform: translateY(80px) scale(0.9);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .toast.toast--error {
+            background: #b92c18;
+            box-shadow: 0 8px 30px rgba(185, 44, 24, 0.3);
+        }
+
+        .toast-icon {
+            width: 22px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        /* ================================================================
+           FOOTER
+        ================================================================ */
+        footer {
+            background: var(--primary-hover);
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .footer-brand .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.83rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+            max-width: 220px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .footer-right {
+            text-align: right;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            padding: 1rem 2rem;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ================================================================
+           RESPONSIVE
+        ================================================================ */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 1.25rem;
+                height: 62px;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .logo-sub {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav {
+                display: none;
+                position: absolute;
+                top: 62px;
+                left: 0;
+                right: 0;
+                background: var(--primary-hover);
+                flex-direction: column;
+                gap: 0;
+                padding: 0.5rem 0 1rem;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            nav.open {
+                display: flex;
+            }
+
+            nav a {
+                padding: 0.75rem 1.5rem;
+                border-radius: 0;
+                font-size: 1rem;
+                width: 100%;
+            }
+
+            .cart-link {
+                border-radius: 0 !important;
+                padding: 0.75rem 1.5rem !important;
+                background: rgba(255, 255, 255, 0.08);
+                border: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+            main {
+                padding: 1.5rem 1rem 4rem;
+            }
+
+            .profile-hero {
+                padding: 1.5rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .profile-name {
+                font-size: 1.25rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .order-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                text-align: center;
+            }
+
+            .footer-brand p {
+                max-width: 100%;
+            }
+
+            .footer-right {
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-avatar {
+                width: 52px;
+                height: 52px;
+                font-size: 1.25rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .order-items {
+                padding: 0.9rem 1rem 1.1rem;
+            }
+
+            .order-card-header {
+                padding: 0.9rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================================================================
+         HEADER
+    ================================================================ -->
+    <header>
+        <a href="index.html" class="logo" aria-label="Manish General Store Home">
+            <img src="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3"
+                alt="Manish General Store Logo" class="logo-icon" loading="lazy" onerror="this.style.display='none'">
+            <div>
+                <span class="logo-text">Manish General Store</span>
+                <span class="logo-sub">Bundu, Ranchi</span>
+            </div>
+        </a>
+
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav id="mainNav" role="navigation" aria-label="Main navigation">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="account.html" class="account-btn account-btn--active-page" id="accountBtn" aria-label="My Account"
+                aria-current="page">
+                <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                </svg>
+                <span id="accountBtnLabel">My Account</span>
+            </a>
+            <a href="cart.html" class="cart-link" aria-label="Cart">
+                <span>🛒</span>
+                Cart
+                <span class="cart-badge" id="cartBadge" aria-live="polite" aria-label="items in cart">0</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- ================================================================
+         MAIN
+    ================================================================ -->
+    <main>
+
+        <!-- Skeleton shown while JS boots and verifies auth -->
+        <div id="pageSkeleton" aria-hidden="true">
+            <div class="skel-block" style="height:130px;"></div>
+            <div class="skel-block" style="height:80px; margin-top:0.5rem;"></div>
+            <div class="skel-block" style="height:28px; width:180px; margin-top:0.5rem;"></div>
+            <div class="skel-block" style="height:100px;"></div>
+            <div class="skel-block" style="height:100px;"></div>
+            <div class="skel-block" style="height:100px;"></div>
+        </div>
+
+        <!-- Real content; hidden until auth guard clears it -->
+        <div id="accountContent" aria-live="polite">
+
+            <!-- Profile Hero -->
+            <div class="profile-hero" role="banner" aria-label="Account overview">
+                <div class="profile-left">
+                    <div class="profile-avatar" id="profileAvatar" aria-hidden="true">?</div>
+                    <div class="profile-info">
+                        <div class="profile-greeting">Welcome back</div>
+                        <div class="profile-name" id="profileName">—</div>
+                        <div class="profile-email" id="profileEmail">—</div>
+                        <div class="profile-badge" id="profileBadge" style="display:none;">
+                            🌿 Valued Customer
+                        </div>
+                    </div>
+                </div>
+                <button class="signout-btn" id="signOutBtn" aria-label="Sign out of your account">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="profile-stats" id="profileStats" style="display:none;">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statTotalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statDelivered">0</div>
+                        <div class="stat-label">Delivered</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statTotalSpent">₹0</div>
+                        <div class="stat-label">Total Spent</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="orders-section-header">
+                <h2 class="orders-section-title">Order History</h2>
+                <span class="orders-count-pill" id="ordersCountPill" aria-live="polite" style="display:none;"></span>
+            </div>
+
+            <!-- Orders are injected here -->
+            <div id="ordersContainer" aria-label="Your past orders" role="list"></div>
+
+        </div>
+    </main>
+
+    <!-- Toast notification -->
+    <div id="toastNotification" class="toast" role="status" aria-live="polite">
+        <span class="toast-icon" aria-hidden="true">✓</span>
+        <span id="toastMessage">Done!</span>
+    </div>
+
+    <!-- ================================================================
+         FOOTER
+    ================================================================ -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo-text">Manish General Store</div>
+                <p>Your trusted neighbourhood grocery store in Bundu, Ranchi since 1998.</p>
+            </div>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="cart.html">Cart</a>
+            </nav>
+            <div class="footer-right">
+                <p>📞 Call us anytime</p>
+                <p style="margin-top:6px;font-size:0.85rem;color:rgba(255,255,255,0.6);">Bundu, Ranchi, Jharkhand</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Manish General Store. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================================================================
+         JAVASCRIPT
+    ================================================================ -->
+    <script>
+        // ── Utility: HTML Escape ──────────────────────────────────────────────
+        function escapeHTML(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');  // FIX: also escape single quotes
+        }
+
+        // ── Utility: Toast ────────────────────────────────────────────────────
+        let _toastTimer = null;
+        function showToast(message, icon = '✓', isError = false) {
+            const el = document.getElementById('toastNotification');
+            const msg = document.getElementById('toastMessage');
+            const ico = el.querySelector('.toast-icon');
+            msg.textContent = message;
+            ico.textContent = icon;
+            el.classList.toggle('toast--error', isError);
+            el.classList.add('show');
+            clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+        }
+
+        // ── Utility: Format currency ──────────────────────────────────────────
+        function formatINR(amount) {
+            const num = parseFloat(amount);
+            if (isNaN(num)) return '₹0.00';
+            return '₹' + num.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // ── Utility: Format date ──────────────────────────────────────────────
+        function formatDate(iso) {
+            if (!iso) return '—';
+            try {
+                return new Date(iso).toLocaleDateString('en-IN', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+            } catch {
+                return iso;
+            }
+        }
+
+        // ── Utility: Status badge CSS modifier ───────────────────────────────
+        function statusModifier(status) {
+            const map = {
+                pending: 'pending',
+                processing: 'processing',
+                shipped: 'shipped',
+                delivered: 'delivered',
+                cancelled: 'cancelled',
+            };
+            return map[(status || '').toLowerCase()] || 'pending';
+        }
+
+        // ── Cart badge sync ───────────────────────────────────────────────────
+        function syncCartBadge() {
+            try {
+                const cart = JSON.parse(localStorage.getItem('manishCartState')) || {};
+                const total = Object.values(cart).reduce((s, q) => s + q, 0);
+                const badge = document.getElementById('cartBadge');
+                if (!badge) return;
+                badge.textContent = total;
+                badge.classList.toggle('visible', total > 0);
+            } catch { /* non-critical */ }
+        }
+
+        // ── Mobile hamburger ──────────────────────────────────────────────────
+        function initHamburger() {
+            const toggle = document.getElementById('menuToggle');
+            const nav = document.getElementById('mainNav');
+            if (!toggle || !nav) return;
+            toggle.addEventListener('click', () => {
+                const open = nav.classList.toggle('open');
+                toggle.classList.toggle('open', open);
+                toggle.setAttribute('aria-expanded', open);
+            });
+            // FIX: Close nav when any nav link is clicked (was missing for mobile)
+            nav.querySelectorAll('a').forEach(link =>
+                link.addEventListener('click', () => {
+                    nav.classList.remove('open');
+                    toggle.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                })
+            );
+            // FIX: Close nav on outside click (new — prevents stuck-open menu)
+            document.addEventListener('click', (e) => {
+                if (!nav.contains(e.target) && !toggle.contains(e.target)) {
+                    nav.classList.remove('open');
+                    toggle.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        //  SECURITY GATE
+        // ════════════════════════════════════════════════════════════════════
+        function readSession() {
+            try {
+                const jwt = localStorage.getItem('user_jwt');
+                const raw = localStorage.getItem('user_data');
+                const data = raw ? JSON.parse(raw) : null;
+                if (jwt && data) return { jwt, data };
+            } catch { /* corrupt data — treat as guest */ }
+            return null;
+        }
+
+        // FIX: Check JWT expiry here too, not just in cart.html
+        function isJwtExpired(jwt) {
+            try {
+                const payload = JSON.parse(atob(jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                return payload.exp ? payload.exp <= Math.floor(Date.now() / 1000) : false;
+            } catch { return true; }  // FIX: malformed JWT = treat as expired (safe default)
+        }
+
+        const session = readSession();
+
+        if (!session || isJwtExpired(session.jwt)) {
+            // Expired or missing session — clear stale data then redirect
+            localStorage.removeItem('user_jwt');
+            localStorage.removeItem('user_data');
+            window.location.replace(
+                'user-login.html?next=' + encodeURIComponent(window.location.pathname)
+            );
+            throw new Error('[account.html] Guest access denied — redirecting to login.');
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        //  AUTHENTICATED BOOTSTRAP
+        // ════════════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Hide skeleton, reveal content
+            document.getElementById('pageSkeleton').style.display = 'none';
+            document.getElementById('accountContent').style.display = 'block';
+
+            // Populate profile hero
+            const userData = session.data;
+
+            const firstName = (
+                userData.full_name?.split(' ')[0] ||
+                userData.first_name ||
+                userData.firstName ||
+                userData.name?.split(' ')[0] ||
+                userData.email?.split('@')[0] ||
+                'Customer'
+            );
+            const fullName = (
+                userData.full_name ||
+                userData.name ||
+                (userData.first_name && userData.last_name
+                    ? `${userData.first_name} ${userData.last_name}`
+                    : firstName)
+            );
+            const email = userData.email || '';
+
+            // Avatar: first letter of first name
+            document.getElementById('profileAvatar').textContent =
+                firstName.charAt(0).toUpperCase();
+            document.getElementById('profileName').textContent = fullName;
+            document.getElementById('profileEmail').textContent = email;
+
+            // Show customer badge — with member-since date if available
+            const badge = document.getElementById('profileBadge');
+            if (badge) {
+                const createdAt = userData.created_at || userData.createdAt || userData.joined_at;
+                if (createdAt) {
+                    try {
+                        const since = new Date(createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+                        badge.textContent = `🌿 Member since ${since}`;
+                    } catch { badge.textContent = '🌿 Valued Customer'; }
+                } else {
+                    badge.textContent = '🌿 Valued Customer';
+                }
+                badge.style.display = 'inline-flex';
+            }
+
+            // Update header account button label to reflect logged-in user
+            const accountBtnLabel = document.getElementById('accountBtnLabel');
+            if (accountBtnLabel) accountBtnLabel.textContent = `Hi, ${firstName}`;
+
+            // Sign-Out handler
+            document.getElementById('signOutBtn').addEventListener('click', () => {
+                // FIX: Disable button immediately to prevent double-click
+                const btn = document.getElementById('signOutBtn');
+                btn.disabled = true;
+                // Only update the text node — don't nuke the SVG icon with textContent
+                const textNode = Array.from(btn.childNodes).find(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
+                if (textNode) textNode.textContent = ' Signing out…';
+
+                // Capture credentials before clearing them
+                const token = session.jwt;
+                const refreshToken = localStorage.getItem('user_refresh_token');
+
+                // Clear localStorage synchronously and immediately
+                localStorage.removeItem('user_jwt');
+                localStorage.removeItem('user_data');
+                localStorage.removeItem('user_refresh_token');
+
+                // Fire-and-forget backend revocation — do NOT await
+                if (token) {
+                    fetch('https://manishgeneralstore.onrender.com/api/v1/users/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ refreshToken: refreshToken || '' }),
+                    }).catch(() => { });
+                }
+
+                showToast("You've been signed out. See you soon! 👋", '👋');
+                setTimeout(() => window.location.replace('index.html'), 1800);
+            });
+
+            syncCartBadge();
+            initHamburger();
+            fetchOrders(session.jwt);
+
+            window.addEventListener('storage', syncCartBadge);
+            window.addEventListener('pageshow', syncCartBadge);
+        });
+
+        // ════════════════════════════════════════════════════════════════════
+        //  ORDER FETCHING
+        // ════════════════════════════════════════════════════════════════════
+
+        async function fetchOrders(jwt) {
+            const container = document.getElementById('ordersContainer');
+
+            container.innerHTML = `
+            <div class="orders-loading" role="status" aria-label="Loading your orders">
+                <div class="spinner" aria-hidden="true"></div>
+                Fetching your orders…
+            </div>`;
+
+            try {
+                const res = await fetch('https://manishgeneralstore.onrender.com/api/v1/users/me/orders', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${jwt}`,
+                    },
+                });
+
+                if (!res.ok) {
+                    if (res.status === 401 || res.status === 403) {
+                        localStorage.removeItem('user_jwt');
+                        localStorage.removeItem('user_data');
+                        localStorage.removeItem('user_refresh_token');
+                        window.location.replace('user-login.html?next=' +
+                            encodeURIComponent(window.location.pathname));
+                        return;
+                    }
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const json = await res.json();
+                // Unwrap common API envelope shapes: { data: [...] } or { orders: [...] } or raw array
+                const orders = Array.isArray(json) ? json
+                    : Array.isArray(json?.data) ? json.data
+                        : Array.isArray(json?.orders) ? json.orders
+                            : [];
+                renderOrders(orders, container);
+
+            } catch (err) {
+                console.error('[account.html] fetchOrders error:', err);
+                renderOrdersError(container, jwt);
+            }
+        }
+
+        // ── renderOrders ──────────────────────────────────────────────────────
+        function renderOrders(orders, container) {
+            container.innerHTML = '';
+
+            if (!Array.isArray(orders) || orders.length === 0) {
+                container.innerHTML = `
+                <div class="empty-orders" role="region" aria-label="No orders yet">
+                    <div class="empty-orders-icon" aria-hidden="true">🛍️</div>
+                    <h3>No orders yet</h3>
+                    <p>Looks like you haven't placed any orders. Browse our fresh selection and get same-day delivery in Bundu!</p>
+                    <a href="index.html" class="empty-shop-btn" aria-label="Start shopping now">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <path d="M16 10a4 4 0 0 1-8 0"/>
+                        </svg>
+                        Start Shopping
+                    </a>
+                </div>`;
+
+                document.getElementById('ordersCountPill').style.display = 'none';
+                hideStats();
+                return;
+            }
+
+            // Show & populate the count pill
+            const pill = document.getElementById('ordersCountPill');
+            pill.textContent = orders.length + (orders.length === 1 ? ' order' : ' orders');
+            pill.style.display = 'inline-block';
+
+            // Populate stats
+            renderStats(orders);
+
+            const MAX_ITEMS_SHOWN = 4;
+
+            orders.forEach(order => {
+                const orderId = escapeHTML(String(order.id || '—'));
+                const orderDate = formatDate(order.created_at);
+                const orderTotal = formatINR(order.total_amount || 0);
+                const statusMod = statusModifier(order.status);
+                const statusLabel = escapeHTML(
+                    (order.status || 'pending').charAt(0).toUpperCase() +
+                    (order.status || 'pending').slice(1)
+                );
+
+                // FIX: Use SVG icons instead of raw unicode for delivered/cancelled
+                const dotIcon = (statusMod === 'delivered') ? '✓ ' :
+                    (statusMod === 'cancelled') ? '✕ ' : '';
+
+                const items = Array.isArray(order.items) ? order.items : [];
+                const visibleItems = items.slice(0, MAX_ITEMS_SHOWN);
+                const hiddenCount = items.length - visibleItems.length;
+
+                let itemsHTML = '';
+                visibleItems.forEach(item => {
+                    const name = escapeHTML(item.name || 'Item');
+                    const qty = parseInt(item.quantity, 10) || 1;
+                    // FIX: Guard against NaN price — parseFloat can return NaN
+                    const priceNum = parseFloat(item.price);
+                    const price = !isNaN(priceNum)
+                        ? `<span class="order-item-price">${formatINR(priceNum * qty)}</span>`
+                        : '';
+                    itemsHTML += `
+                    <div class="order-item" role="listitem">
+                        <div class="order-item-left">
+                            <span class="order-item-dot" aria-hidden="true"></span>
+                            <span class="order-item-name">${name}</span>
+                        </div>
+                        <span class="order-item-qty">× ${qty}</span>
+                        ${price}
+                    </div>`;
+                });
+
+                // FIX: "Show more" toggle button replaces the static "… and N more" label
+                let moreHTML = '';
+                if (hiddenCount > 0) {
+                    const hiddenItemsHTML = items.slice(MAX_ITEMS_SHOWN).map(item => {
+                        const name = escapeHTML(item.name || 'Item');
+                        const qty = parseInt(item.quantity, 10) || 1;
+                        const priceNum = parseFloat(item.price);
+                        const price = !isNaN(priceNum)
+                            ? `<span class="order-item-price">${formatINR(priceNum * qty)}</span>`
+                            : '';
+                        return `<div class="order-item" role="listitem" style="display:none;" data-hidden-item>
+                            <div class="order-item-left">
+                                <span class="order-item-dot" aria-hidden="true"></span>
+                                <span class="order-item-name">${name}</span>
+                            </div>
+                            <span class="order-item-qty">× ${qty}</span>
+                            ${price}
+                        </div>`;
+                    }).join('');
+                    moreHTML = `${hiddenItemsHTML}
+                    <button class="expand-items-btn" aria-expanded="false" data-hidden-count="${hiddenCount}">
+                        ▸ Show ${hiddenCount} more item${hiddenCount > 1 ? 's' : ''}
+                    </button>`;
+                }
+
+                if (items.length === 0) {
+                    itemsHTML = `<div class="items-more-label" style="font-style:normal; color:var(--text-muted);">No item details available.</div>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'order-card';
+                card.setAttribute('role', 'listitem');
+                card.setAttribute('aria-label', `Order ${orderId}`);
+                card.innerHTML = `
+                <div class="order-card-header">
+                    <div class="order-meta">
+                        <span class="order-id">Order #${orderId}</span>
+                        <span class="order-date">${orderDate}</span>
+                    </div>
+                    <div class="order-header-right">
+                        <span class="order-total" aria-label="Order total ${orderTotal}">${orderTotal}</span>
+                        <span class="status-badge status-badge--${statusMod}"
+                              role="status" aria-label="Status: ${statusLabel}">
+                            ${dotIcon}${statusLabel}
+                        </span>
+                    </div>
+                </div>
+                <div class="order-items" role="list" aria-label="Items in order ${orderId}">
+                    ${itemsHTML}
+                    ${moreHTML}
+                </div>`;
+
+                // Expand/collapse handler for "Show N more items"
+                card.querySelector('.expand-items-btn')?.addEventListener('click', function () {
+                    const expanded = this.getAttribute('aria-expanded') === 'true';
+                    const hiddenItems = card.querySelectorAll('[data-hidden-item]');
+                    const count = parseInt(this.dataset.hiddenCount, 10);
+                    hiddenItems.forEach(el => el.style.display = expanded ? 'none' : 'flex');
+                    this.setAttribute('aria-expanded', !expanded);
+                    this.textContent = expanded
+                        ? `▸ Show ${count} more item${count > 1 ? 's' : ''}`
+                        : `▾ Show less`;
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // ── renderStats ───────────────────────────────────────────────────────
+        function renderStats(orders) {
+            const statsEl = document.getElementById('profileStats');
+            if (!statsEl) return;
+
+            const total = orders.length;
+            const delivered = orders.filter(o => (o.status || '').toLowerCase() === 'delivered').length;
+            const spent = orders.reduce((sum, o) => {
+                const v = parseFloat(o.total_amount);
+                return sum + (isNaN(v) ? 0 : v);
+            }, 0);
+
+            document.getElementById('statTotalOrders').textContent = total;
+            document.getElementById('statDelivered').textContent = delivered;
+            // FIX: Show abbreviated value for large amounts (e.g. ₹1.2k)
+            document.getElementById('statTotalSpent').textContent =
+                spent >= 1000
+                    ? '₹' + (spent / 1000).toFixed(1) + 'k'
+                    : formatINR(spent);
+
+            statsEl.style.display = 'grid';
+        }
+
+        function hideStats() {
+            const statsEl = document.getElementById('profileStats');
+            if (statsEl) statsEl.style.display = 'none';
+        }
+
+        // ── renderOrdersError ─────────────────────────────────────────────────
+        // FIX: Added a retry button so users don't have to manually reload
+        function renderOrdersError(container, jwt) {
+            container.innerHTML = `
+            <div class="orders-error" role="alert" aria-live="assertive">
+                <strong>⚠️ Could not load your orders</strong>
+                <p>Please make sure the server is running and try again.<br>
+                   If the problem persists, contact us at the store.</p>
+                <button class="retry-btn" id="retryOrdersBtn">
+                    ↺ Retry
+                </button>
+            </div>`;
+
+            document.getElementById('retryOrdersBtn')?.addEventListener('click', () => {
+                fetchOrders(jwt);
+            });
+        }
+    </script>
+
+</body>
+
+</html>

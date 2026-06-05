@@ -884,15 +884,32 @@
         const API_BASE = 'https://manish-general-store-api.onrender.com/api/v1';
 
         // ── Redirect if already logged in ─────────────────────────────────────
-        // Don't let a logged-in user see the login page
+        // Checks both that a token exists AND that it hasn't expired yet.
+        // An expired token means the user must log in again — don't redirect.
         (function checkAlreadyLoggedIn() {
             try {
                 const token = localStorage.getItem('user_jwt');
                 const userData = localStorage.getItem('user_data');
-                if (token && userData) {
-                    window.location.replace('index.html');
+                if (!token || !userData) return;
+
+                // Decode the JWT payload (middle segment) without a library.
+                // We only need the `exp` claim — no signature verification needed here
+                // because the server will reject any forged/expired token on real requests.
+                const payloadBase64 = token.split('.')[1];
+                if (!payloadBase64) return;
+                const payload = JSON.parse(atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/')));
+                const nowSec = Math.floor(Date.now() / 1000);
+
+                if (payload.exp && payload.exp > nowSec) {
+                    // Token is still valid — skip the login page.
+                    // Honour any redirect intent in the URL so the user
+                    // lands on the page they were trying to reach.
+                    const _sp = new URLSearchParams(window.location.search);
+                    const _dest = _sp.get('redirect') || _sp.get('next') || 'index.html';
+                    window.location.replace(_dest);
                 }
-            } catch (e) { /* ignore */ }
+                // If expired: fall through and let the user log in again
+            } catch (e) { /* ignore — malformed token, just show the login page */ }
         })();
 
         // ── Cart badge sync ───────────────────────────────────────────────────
@@ -1049,14 +1066,52 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // ── SUCCESS — persist JWT and user profile ────────────────
+                    // ── SUCCESS — persist JWT, refresh token, and user profile ──
                     localStorage.setItem('user_jwt', data.data.token);
+                    localStorage.setItem('user_refresh_token', data.data.refreshToken);
                     localStorage.setItem('user_data', JSON.stringify(data.data.user));
 
-                    showToast(`Welcome back, ${data.data.user.full_name.split(' ')[0]}! 👋`);
+                    // ── Merge guest cart into the backend cart ─────────────────
+                    // If the user added items while browsing as a guest, push
+                    // them into their server-side cart now before redirecting.
+                    // Failures are silently swallowed — a failed merge is not
+                    // a reason to block the user from reaching the homepage.
+                    try {
+                        const guestCart = JSON.parse(localStorage.getItem('manishCartState') || '{}');
+                        const guestItems = Object.entries(guestCart)
+                            .map(([product_id, quantity]) => ({ product_id: parseInt(product_id, 10), quantity }))
+                            .filter(item => item.quantity > 0);
+
+                        if (guestItems.length > 0) {
+                            await fetch(`${API_BASE}/cart/merge`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${data.data.token}`,
+                                },
+                                body: JSON.stringify({ items: guestItems }),
+                            });
+                            // Clear the local guest cart — the backend now owns it
+                            localStorage.removeItem('manishCartState');
+                        }
+                    } catch (mergeErr) {
+                        console.warn('[Login] Cart merge failed (non-fatal):', mergeErr.message);
+                    }
+
+                    const firstName = data.data.user.full_name?.split(' ')[0] || 'there';
+                    showToast(`Welcome back, ${firstName}! 👋`);
+
+                    // Respect any redirect intent set before login.
+                    // Priority: ?redirect= URL param → ?next= URL param →
+                    // sessionStorage('redirectAfterLogin') → homepage.
+                    // URL params are set by checkout.html and account.html
+                    // when they bounce an unauthenticated user here.
+                    const _sp = new URLSearchParams(window.location.search);
+                    const redirectTo = _sp.get('redirect') || _sp.get('next') || sessionStorage.getItem('redirectAfterLogin') || 'index.html';
+                    sessionStorage.removeItem('redirectAfterLogin');
 
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        window.location.href = redirectTo;
                     }, 1500);
 
                 } else {
