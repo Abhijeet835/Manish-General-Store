@@ -14,9 +14,9 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
-        /* ================================
-           DESIGN SYSTEM — mirrors index.html
-        ================================ */
+        /* ================================================================
+           DESIGN SYSTEM
+        ================================================================ */
         :root {
             --primary: #1a5c2a;
             --primary-light: #2e7d3c;
@@ -24,6 +24,7 @@
             --accent: #e8501a;
             --accent-light: #ff6b35;
             --bg: #f4f8f2;
+            --bg-pattern: #eaf2e5;
             --card-bg: #ffffff;
             --text: #1c2b1e;
             --text-muted: #6b7c6e;
@@ -68,9 +69,9 @@
             z-index: 0;
         }
 
-        /* ================================
-           HEADER — identical to index.html
-        ================================ */
+        /* ================================================================
+           HEADER
+        ================================================================ */
         header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: #fff;
@@ -100,6 +101,7 @@
             border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.4);
             object-fit: cover;
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .logo-text {
@@ -147,19 +149,21 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.20) !important;
+            border: 1px solid rgba(255, 255, 255, 0.40) !important;
             padding: 0.45rem 1rem !important;
             border-radius: 20px !important;
-            position: relative;
-            color: #a5d6a7 !important;
+            color: #fff !important;
+            /* FIX: Removed the incorrect green tint (#a5d6a7) — cart link was
+               rendered in a different colour from all other nav links. Now
+               white like everything else. */
         }
 
         .cart-link:hover {
-            background: rgba(255, 255, 255, 0.22) !important;
+            background: rgba(255, 255, 255, 0.28) !important;
         }
 
-        /* Account / Sign-In button */
+        /* Account button */
         .account-btn {
             display: inline-flex;
             align-items: center;
@@ -173,11 +177,9 @@
             padding: 0.42rem 1.05rem !important;
             border-radius: 20px !important;
             text-decoration: none;
-            transition:
-                background var(--speed) ease,
-                border-color var(--speed) ease,
-                color var(--speed) ease,
-                box-shadow var(--speed) ease;
+            cursor: pointer;
+            transition: background var(--speed) ease, border-color var(--speed) ease,
+                color var(--speed) ease, box-shadow var(--speed) ease;
             white-space: nowrap;
         }
 
@@ -195,10 +197,17 @@
             opacity: 0.9;
         }
 
-        /* Logout variant — subtle destructive accent on hover */
+        .account-btn--greeting {
+            cursor: default;
+        }
+
         .account-btn--logout {
             background: rgba(232, 80, 26, 0.15);
             border-color: rgba(232, 80, 26, 0.40);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
         }
 
         .account-btn--logout:hover {
@@ -245,9 +254,23 @@
             transition: all 0.3s ease;
         }
 
-        /* ================================
-           PAGE HERO / TITLE AREA
-        ================================ */
+        /* Hamburger "X" animation */
+        .menu-toggle.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .menu-toggle.open span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .menu-toggle.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* ================================================================
+           PAGE HERO
+        ================================================================ */
         .page-hero {
             position: relative;
             z-index: 1;
@@ -271,9 +294,37 @@
             margin-top: 0.35rem;
         }
 
-        /* ================================
+        .sync-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            background: rgba(46, 125, 60, 0.1);
+            border: 1px solid rgba(46, 125, 60, 0.2);
+            border-radius: 20px;
+            padding: 0.2rem 0.65rem;
+            margin-left: 0.6rem;
+            vertical-align: middle;
+            animation: pulse-pill 1.4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-pill {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* ================================================================
            MAIN LAYOUT
-        ================================ */
+        ================================================================ */
         main {
             flex: 1;
             position: relative;
@@ -290,9 +341,9 @@
             margin: 0 auto;
         }
 
-        /* ================================
+        /* ================================================================
            EMPTY CART STATE
-        ================================ */
+        ================================================================ */
         .empty-cart {
             display: none;
             flex-direction: column;
@@ -337,6 +388,7 @@
             font-size: 0.95rem;
             font-weight: 700;
             transition: background var(--speed), transform 0.15s;
+            box-shadow: 0 4px 16px rgba(26, 92, 42, 0.2);
         }
 
         .shop-btn:hover {
@@ -344,9 +396,9 @@
             transform: translateY(-2px);
         }
 
-        /* ================================
+        /* ================================================================
            CART ITEMS LIST
-        ================================ */
+        ================================================================ */
         .cart-items {
             display: flex;
             flex-direction: column;
@@ -363,7 +415,6 @@
             gap: 1.25rem;
             box-shadow: var(--shadow-card);
             transition: transform var(--speed), box-shadow var(--speed);
-            /* entrance animation */
             opacity: 0;
             animation: cardIn 0.45s ease forwards;
         }
@@ -414,6 +465,11 @@
             font-size: 0.82rem;
             color: var(--text-muted);
             margin-bottom: 0.5rem;
+            /* FIX: Clamp description to 2 lines max to keep cards tidy */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .item-unit-price {
@@ -422,7 +478,6 @@
             font-weight: 600;
         }
 
-        /* Quantity control — styled like index.html qty-selector */
         .qty-control {
             display: flex;
             align-items: center;
@@ -447,10 +502,22 @@
             justify-content: center;
             transition: background 0.2s;
             line-height: 1;
+            /* FIX: Prevent accidental text selection on fast double-click */
+            user-select: none;
         }
 
         .qty-btn:hover {
             background: var(--primary-hover);
+        }
+
+        /* FIX: Disabled state for qty buttons (at stock limit or qty=1 for minus) */
+        .qty-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .qty-btn:disabled:hover {
+            background: transparent;
         }
 
         .qty-display {
@@ -486,6 +553,7 @@
             transition: color 0.2s, background 0.2s, transform 0.2s;
             flex-shrink: 0;
             margin-left: 0.25rem;
+            /* FIX: Add aria-label in JS for each item */
         }
 
         .remove-btn:hover {
@@ -494,9 +562,34 @@
             transform: scale(1.15);
         }
 
-        /* ================================
+        /* ── Cart skeleton (shown during initial load) ────────────── */
+        .cart-skeleton {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .skel-card {
+            background: linear-gradient(90deg, var(--border) 25%, var(--bg-pattern) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            border-radius: var(--radius);
+            height: 120px;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* ================================================================
            ORDER SUMMARY PANEL
-        ================================ */
+        ================================================================ */
         .order-summary {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -535,6 +628,25 @@
             color: var(--text);
         }
 
+        /* FIX: Free delivery indicator */
+        .free-delivery {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .savings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.9rem;
+            font-size: 0.88rem;
+            color: #1a5c2a;
+            background: rgba(26, 92, 42, 0.06);
+            border: 1px solid rgba(26, 92, 42, 0.15);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+        }
+
         .summary-divider {
             border: none;
             border-top: 1px solid var(--border);
@@ -568,6 +680,40 @@
             text-align: right;
         }
 
+        /* FIX: Free delivery threshold progress bar (NEW) */
+        .free-delivery-bar {
+            margin-top: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.8rem;
+        }
+
+        .free-delivery-bar p {
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .free-delivery-bar p strong {
+            color: var(--primary);
+        }
+
+        .progress-track {
+            height: 6px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
         .checkout-btn {
             width: 100%;
             background: var(--accent);
@@ -580,21 +726,30 @@
             border-radius: var(--radius);
             cursor: pointer;
             margin-top: 1.75rem;
-            transition: background var(--speed), transform 0.15s;
+            transition: background var(--speed), transform 0.15s, box-shadow var(--speed);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             letter-spacing: 0.2px;
+            box-shadow: 0 4px 16px rgba(232, 80, 26, 0.25);
         }
 
         .checkout-btn:hover {
             background: #c94215;
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(232, 80, 26, 0.35);
         }
 
         .checkout-btn:active {
             transform: scale(0.98);
+        }
+
+        /* FIX: Loading state for checkout button */
+        .checkout-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         .continue-link {
@@ -612,7 +767,6 @@
             color: var(--primary-hover);
         }
 
-        /* Safe delivery badge */
         .trust-badges {
             display: flex;
             gap: 0.75rem;
@@ -632,9 +786,38 @@
             border-radius: 20px;
         }
 
-        /* ================================
+        /* Guest login nudge banner */
+        .login-nudge {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(26, 92, 42, 0.06), rgba(46, 125, 60, 0.04));
+            border: 1px solid rgba(26, 92, 42, 0.18);
+            border-radius: var(--radius);
+            padding: 0.85rem 1.25rem;
+            margin-top: 1.25rem;
+            font-size: 0.88rem;
+            color: var(--text);
+        }
+
+        .login-nudge.visible {
+            display: flex;
+        }
+
+        .login-nudge strong {
+            color: var(--primary);
+        }
+
+        .login-nudge a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* ================================================================
            TOAST
-        ================================ */
+        ================================================================ */
         .toast {
             position: fixed;
             bottom: 28px;
@@ -662,6 +845,14 @@
             opacity: 1;
         }
 
+        .toast.toast--warn {
+            background: #92600a;
+        }
+
+        .toast.toast--error {
+            background: #b92c18;
+        }
+
         .toast-icon {
             width: 22px;
             height: 22px;
@@ -674,9 +865,9 @@
             flex-shrink: 0;
         }
 
-        /* ================================
+        /* ================================================================
            FOOTER
-        ================================ */
+        ================================================================ */
         footer {
             background: var(--primary-hover);
             color: rgba(255, 255, 255, 0.9);
@@ -698,25 +889,28 @@
             font-family: 'Playfair Display', serif;
             font-size: 1.2rem;
             font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
         }
 
         .footer-brand p {
-            font-size: 0.83rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 0.5rem;
-            max-width: 220px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.65);
             line-height: 1.6;
+            max-width: 280px;
         }
 
         .footer-links {
             display: flex;
-            gap: 1.5rem;
+            flex-direction: column;
+            gap: 0.6rem;
+            text-align: center;
         }
 
         .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.75);
             text-decoration: none;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             transition: color 0.2s;
         }
 
@@ -726,21 +920,21 @@
 
         .footer-right {
             text-align: right;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.75);
         }
 
         .footer-bottom {
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
             padding: 1rem 2rem;
-            font-size: 0.78rem;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        /* ================================
+        /* ================================================================
            RESPONSIVE
-        ================================ */
+        ================================================================ */
         @media (max-width: 900px) {
             .cart-layout {
                 grid-template-columns: 1fr;
@@ -749,26 +943,9 @@
             .order-summary {
                 position: static;
             }
-
-            .footer-inner {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .footer-brand p {
-                max-width: 100%;
-            }
-
-            .footer-right {
-                text-align: center;
-            }
-
-            .footer-links {
-                justify-content: center;
-            }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
             header {
                 padding: 0 1.25rem;
                 height: 62px;
@@ -794,9 +971,11 @@
                 right: 0;
                 background: var(--primary-hover);
                 flex-direction: column;
-                gap: 0;
                 padding: 0.5rem 0 1rem;
+                gap: 0;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+                z-index: 999;
             }
 
             nav.open {
@@ -813,9 +992,9 @@
             .cart-link {
                 border-radius: 0 !important;
                 padding: 0.75rem 1.5rem !important;
-                border: none;
+                background: rgba(255, 255, 255, 0.08) !important;
+                border: none !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-                background: rgba(255, 255, 255, 0.08);
             }
 
             main {
@@ -823,35 +1002,44 @@
             }
 
             .page-hero {
-                padding: 2rem 1rem 1.25rem;
+                padding: 1.5rem 1rem 1rem;
             }
-        }
 
-        @media (max-width: 520px) {
+            .cart-item {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
             .item-img {
                 width: 64px;
                 height: 64px;
             }
 
-            .cart-item {
-                padding: 1rem;
-                gap: 0.9rem;
+            .item-line-total {
+                width: auto;
             }
 
-            .item-line-total {
-                width: 56px;
-                font-size: 1rem;
+            .footer-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-brand p {
+                max-width: 100%;
+            }
+
+            .footer-right {
+                text-align: center;
             }
         }
     </style>
 </head>
 
 <body>
-
     <header>
         <a href="index.html" class="logo" aria-label="Manish General Store Home">
             <img src="https://tse2.mm.bing.net/th/id/OIP.gX9HtpLOXF1P4NjZ_9bocwHaHa?pid=ImgDet&w=182&h=182&c=7&o=7&rm=3"
-                alt="Logo" class="logo-icon" loading="lazy" onerror="this.style.display='none'">
+                alt="Manish General Store Logo" class="logo-icon" loading="lazy" onerror="this.style.display='none'">
             <div>
                 <span class="logo-text">Manish General Store</span>
                 <span class="logo-sub">Bundu, Ranchi</span>
@@ -862,22 +1050,29 @@
             <span></span><span></span><span></span>
         </button>
 
-        <nav id="mainNav" role="navigation">
+        <nav id="mainNav" role="navigation" aria-label="Main navigation">
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
-            <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
-                <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    aria-hidden="true">
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                </svg>
-                <span class="account-btn__label" id="accountBtnLabel">Sign In</span>
-            </a>
-            <a href="cart.html" class="cart-link" aria-label="Cart">
+            <!--
+                initAccountButton() mutates this element at runtime.
+                Guest  → href="user-login.html", label "Sign In"
+                Logged in → "Hi, [Name]" + separate "Log out" button
+            -->
+            <span id="navAccountArea" style="display:contents;">
+                <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
+                    <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                    </svg>
+                    <span id="accountBtnLabel">Sign In</span>
+                </a>
+            </span>
+            <a href="cart.html" class="cart-link" aria-label="Cart" aria-current="page">
                 🛒 Cart
-                <span class="cart-badge" id="cartBadge">0</span>
+                <span class="cart-badge" id="cartBadge" aria-live="polite">0</span>
             </a>
         </nav>
     </header>
@@ -887,18 +1082,25 @@
         <p id="cartSubtitle">Loading your items…</p>
     </div>
 
+    <!-- Empty cart state -->
     <div class="empty-cart" id="emptyCart">
         <div class="empty-cart-icon">🛒</div>
         <h2>Your cart is empty!</h2>
-        <p>Looks like you haven't added any groceries yet. Let's fix that!</p>
+        <p id="emptyCartMsg">Looks like you haven't added any groceries yet. Let's fix that!</p>
         <a href="index.html" class="shop-btn">🛍️ Start Shopping</a>
     </div>
 
     <main>
+        <!-- Cart skeleton shown while fetching catalogue -->
+        <div class="cart-skeleton" id="cartSkeleton" style="display:none; max-width:1200px; margin:0 auto;">
+            <div class="skel-card"></div>
+            <div class="skel-card"></div>
+            <div class="skel-card" style="opacity:0.6;"></div>
+        </div>
+
         <div class="cart-layout" id="cartLayout" style="display:none;">
 
-            <div class="cart-items" id="cartItemsContainer">
-            </div>
+            <div class="cart-items" id="cartItemsContainer"></div>
 
             <aside class="order-summary" aria-label="Order Summary">
                 <h2>Order Summary</h2>
@@ -907,9 +1109,17 @@
                     <span class="label">Subtotal (<span id="totalItemsCount">0</span> items)</span>
                     <span class="value" id="subtotalAmount">₹0</span>
                 </div>
-                <div class="summary-row">
+                <div class="summary-row" id="deliveryFeeRow">
                     <span class="label">Delivery Fee</span>
                     <span class="value" id="deliveryFeeDisplay">₹30</span>
+                </div>
+
+                <!-- FIX: Free delivery progress bar (shows when subtotal < threshold) -->
+                <div class="free-delivery-bar" id="freeDeliveryBar">
+                    <p id="freeDeliveryMsg">Add <strong id="freeDeliveryNeeded">₹…</strong> more for free delivery!</p>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="freeDeliveryProgress" style="width:0%"></div>
+                    </div>
                 </div>
 
                 <hr class="summary-divider">
@@ -923,6 +1133,13 @@
                 <button class="checkout-btn" id="checkoutBtn">
                     🛍️ Proceed to Checkout
                 </button>
+
+                <div class="login-nudge" id="loginNudge">
+                    <span>🔑</span>
+                    <span><strong>Sign in</strong> to save your cart and unlock faster checkout.
+                        <a href="user-login.html">Login →</a></span>
+                </div>
+
                 <a href="index.html" class="continue-link">← Continue Shopping</a>
 
                 <div class="trust-badges">
@@ -935,7 +1152,7 @@
     </main>
 
     <div class="toast" id="toastEl" role="status" aria-live="polite">
-        <span class="toast-icon">✓</span>
+        <span class="toast-icon" aria-hidden="true">✓</span>
         <span id="toastMsg">Done!</span>
     </div>
 
@@ -962,158 +1179,159 @@
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
 
-            /* ─────────────────────────────────────────────
-               LIVE PRODUCT CATALOGUE
-               Populated once on page load from the API.
-               Keys are product IDs coerced to String so
-               both integer PKs and UUIDs resolve correctly.
-            ───────────────────────────────────────────── */
-            let productCatalog = {};   // { "1": {...}, "2": {...}, ... }
-            let catalogReady = false;  // guard: true after first successful fetch
-
+            /* ════════════════════════════════════════════════════════
+               CONSTANTS & CONFIG
+            ════════════════════════════════════════════════════════ */
+            const API_BASE = "https://manish-general-store-api.onrender.com/api/v1";
             const DELIVERY_FEE = 30;
+            // FIX: Free delivery threshold — show progress bar & waive fee above this
+            const FREE_DELIVERY_THRESHOLD = 500;
 
-            // ── Elements ──────────────────────────────────────────────
+            /* ════════════════════════════════════════════════════════
+               DOM REFERENCES
+            ════════════════════════════════════════════════════════ */
             const cartBadge = document.getElementById("cartBadge");
             const cartLayout = document.getElementById("cartLayout");
+            const cartSkeleton = document.getElementById("cartSkeleton");
             const emptyCart = document.getElementById("emptyCart");
+            const emptyCartMsg = document.getElementById("emptyCartMsg");
             const cartContainer = document.getElementById("cartItemsContainer");
             const cartSubtitle = document.getElementById("cartSubtitle");
             const totalItemsEl = document.getElementById("totalItemsCount");
             const subtotalEl = document.getElementById("subtotalAmount");
             const deliveryFeeEl = document.getElementById("deliveryFeeDisplay");
+            const deliveryFeeRow = document.getElementById("deliveryFeeRow");
             const grandTotalEl = document.getElementById("grandTotal");
+            const freeDeliveryBar = document.getElementById("freeDeliveryBar");
+            const freeDeliveryMsg = document.getElementById("freeDeliveryMsg");
+            const freeDeliveryNeeded = document.getElementById("freeDeliveryNeeded");
+            const freeDeliveryProg = document.getElementById("freeDeliveryProgress");
             const toastEl = document.getElementById("toastEl");
             const toastMsg = document.getElementById("toastMsg");
             const menuToggle = document.getElementById("menuToggle");
             const mainNav = document.getElementById("mainNav");
+            const loginNudge = document.getElementById("loginNudge");
 
-            // ── Load cart from localStorage ───────────────────────────
-            // Wrapped in a function so BFCache and storage events can
-            // call it to get a fresh snapshot without a page reload.
-            let cart = {};
-            function loadCart() {
-                try {
-                    cart = JSON.parse(localStorage.getItem("manishCartState")) || {};
-                } catch {
-                    cart = {};
-                }
+            /* ════════════════════════════════════════════════════════
+               AUTH HELPERS
+            ════════════════════════════════════════════════════════ */
+            function getJwt() { return localStorage.getItem("user_jwt") || null; }
+            function getUserData() {
+                try { return JSON.parse(localStorage.getItem("user_data")) || null; }
+                catch { return null; }
             }
-            loadCart();
-
-            // ── BFCache & tab-sync listeners ──────────────────────────
-            window.addEventListener("pageshow", () => {
-                loadCart();
-                renderCart();
-            });
-            window.addEventListener("storage", () => {
-                loadCart();
-                renderCart();
-            });
-
-            /* ─────────────────────────────────────────────────────────
-               AUTH — update header account button based on session
-            ───────────────────────────────────────────────────────── */
-            (function initAccountButton() {
-                const accountBtn = document.getElementById("accountBtn");
-                const accountLabel = document.getElementById("accountBtnLabel");
-                if (!accountBtn) return;
-
-                let userData = null;
+            function isLoggedIn() {
+                const token = getJwt();
+                if (!token || !getUserData()) return false;
                 try {
-                    const raw = localStorage.getItem("user_data");
-                    userData = raw ? JSON.parse(raw) : null;
-                } catch { userData = null; }
+                    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                    return payload.exp ? payload.exp > Math.floor(Date.now() / 1000) : true;
+                } catch { return false; }
+            }
+            function authHeaders() {
+                return { "Content-Type": "application/json", "Authorization": `Bearer ${getJwt()}` };
+            }
 
-                const jwt = localStorage.getItem("user_jwt");
-                const isLoggedIn = !!(jwt && userData);
+            /* ════════════════════════════════════════════════════════
+               HEADER ACCOUNT BUTTON
+            ════════════════════════════════════════════════════════ */
+            function isJwtExpired(token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                    return payload.exp ? payload.exp <= Math.floor(Date.now() / 1000) : false;
+                } catch { return true; }
+            }
 
-                if (isLoggedIn) {
-                    // Derive a friendly first name (fall back gracefully)
+            function initAccountButton() {
+                const area = document.getElementById("navAccountArea");
+                if (!area) return;
+
+                if (isLoggedIn()) {
+                    const userData = getUserData();
+                    // FIX: server returns full_name — not first_name/firstName
                     const firstName = (
-                        userData.first_name ||
-                        userData.firstName ||
-                        userData.name?.split(" ")[0] ||
-                        userData.email?.split("@")[0] ||
+                        userData?.full_name?.split(" ")[0] ||
+                        userData?.email?.split("@")[0] ||
                         "You"
                     );
 
-                    // Switch to logout appearance
-                    accountBtn.removeAttribute("href");
-                    accountBtn.setAttribute("role", "button");
-                    accountBtn.setAttribute("aria-label", `Signed in as ${firstName}. Click to log out.`);
-                    accountBtn.classList.add("account-btn--logout");
-                    accountLabel.textContent = `Hi, ${firstName} — Log out`;
+                    area.innerHTML = `
+                        <a href="account.html" class="account-btn account-btn--greeting"
+                           aria-label="Signed in as ${firstName}">
+                            <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                            </svg>
+                            Hi, ${firstName}
+                        </a>
+                        <button class="account-btn account-btn--logout" id="logoutBtn" aria-label="Log out">
+                            Log out
+                        </button>`;
 
-                    accountBtn.addEventListener("click", (e) => {
-                        e.preventDefault();
+                    document.getElementById("logoutBtn").addEventListener("click", async () => {
+                        const btn = document.getElementById("logoutBtn");
+                        if (btn) { btn.disabled = true; btn.textContent = "Signing out…"; }
+
+                        const token = getJwt();
+                        const refreshToken = localStorage.getItem("user_refresh_token");
+                        if (token) {
+                            try {
+                                await fetch(`${API_BASE}/users/logout`, {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                                    body: JSON.stringify({ refreshToken: refreshToken || "" }),
+                                });
+                            } catch (err) {
+                                console.warn("[Logout] Backend revoke failed (non-fatal):", err.message);
+                            }
+                        }
                         localStorage.removeItem("user_jwt");
+                        localStorage.removeItem("user_refresh_token");
                         localStorage.removeItem("user_data");
                         showToast("You've been signed out. See you soon!");
-                        setTimeout(() => location.reload(), 1600);
+                        // FIX: replace busts bfcache so back-navigation doesn't restore stale logged-in page
+                        setTimeout(() => { window.location.replace("index.html"); }, 1600);
                     });
+                } else {
+                    // FIX: clear any stale/expired tokens silently
+                    const staleJwt = getJwt();
+                    if (staleJwt && isJwtExpired(staleJwt)) {
+                        localStorage.removeItem("user_jwt");
+                        localStorage.removeItem("user_refresh_token");
+                        localStorage.removeItem("user_data");
+                    }
+                    area.innerHTML = `
+                        <a href="user-login.html" class="account-btn" id="accountBtn" aria-label="Sign in to your account">
+                            <svg class="account-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                            </svg>
+                            <span>Sign In</span>
+                        </a>`;
                 }
-                // If not logged in: keep the default href="user-login.html" and label "Sign In"
-            })();
-
-            // ── Helpers ───────────────────────────────────────────────
-
-            async function saveCart() {
-                // TODO: Replace with backend API POST request to sync cart state with database in Phase 10
-                localStorage.setItem("manishCartState", JSON.stringify(cart));
             }
 
-            function getCartTotalQty() {
-                return Object.values(cart).reduce((s, q) => s + q, 0);
-            }
+            initAccountButton();
 
-            function updateBadge() {
-                const total = getCartTotalQty();
-                cartBadge.textContent = total;
-                total > 0
-                    ? cartBadge.classList.add("visible")
-                    : cartBadge.classList.remove("visible");
-            }
+            /* ════════════════════════════════════════════════════════
+               LIVE PRODUCT CATALOGUE
+            ════════════════════════════════════════════════════════ */
+            let productCatalog = {};
+            let catalogReady = false;
 
-            // ── Toast ─────────────────────────────────────────────────
-            let toastTimer = null;
-            function showToast(msg) {
-                toastMsg.textContent = msg;
-                toastEl.classList.add("show");
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
-            }
-
-            /* ─────────────────────────────────────────────────────────
-               initCatalog
-               Fetches the full product list from the live API once and
-               builds a string-keyed lookup map.  Called by renderCart
-               before any row is constructed so a single network round-
-               trip serves the whole page.
-
-               DB shape: { id, name, description, price, category,
-                           in_stock, image_url, created_at }
-
-               Returns true on success, false on network/parse failure.
-            ───────────────────────────────────────────────────────── */
             async function initCatalog() {
-                if (catalogReady) return true;   // already loaded this session
-
+                if (catalogReady) return true;
                 try {
-                    const res = await fetch("https://manish-general-store-api.onrender.com/api/v1/products");
+                    const res = await fetch(`${API_BASE}/products`);
                     if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     const json = await res.json();
-
-                    // Support both { data: [...] } and a bare array response
                     const items = Array.isArray(json) ? json : (json.data ?? []);
-
                     productCatalog = {};
-                    items.forEach(p => {
-                        productCatalog[String(p.id)] = p;
-                    });
-
+                    items.forEach(p => { productCatalog[String(p.id)] = p; });
                     catalogReady = true;
                     return true;
                 } catch (err) {
@@ -1122,201 +1340,420 @@
                 }
             }
 
-            /* ─────────────────────────────────────────────────────────
-               buildItemRow
-               Constructs a single .cart-item element from resolved
-               product data and the current quantity. Accepts the
-               product object directly (already fetched by renderCart).
+            /* ════════════════════════════════════════════════════════
+               GUEST CART (localStorage)
+            ════════════════════════════════════════════════════════ */
+            let cart = {};
 
-               DB field mapping:
-                 product.image_url   → img src  (graceful fallback on null/empty)
-                 product.description → meta text (truncated to 65 chars)
-                 product.price       → parseFloat() – Postgres returns a string
-            ───────────────────────────────────────────────────────── */
+            function loadGuestCart() {
+                try { cart = JSON.parse(localStorage.getItem("manishCartState")) || {}; }
+                catch { cart = {}; }
+            }
+
+            function saveGuestCart() { localStorage.setItem("manishCartState", JSON.stringify(cart)); }
+            function clearGuestCart() { cart = {}; localStorage.removeItem("manishCartState"); }
+
+            /* ════════════════════════════════════════════════════════
+               BACKEND CART SYNC / MERGE
+            ════════════════════════════════════════════════════════ */
+            async function syncBackendCart() {
+                const jwt = getJwt();
+                if (!jwt) return;
+
+                loadGuestCart();
+                const guestItems = Object.entries(cart)
+                    .filter(([, qty]) => qty > 0)
+                    .map(([product_id, quantity]) => ({ product_id: parseInt(product_id, 10), quantity }));
+
+                if (guestItems.length > 0) {
+                    try {
+                        const mergeRes = await fetch(`${API_BASE}/cart/merge`, {
+                            method: "POST",
+                            headers: authHeaders(),
+                            body: JSON.stringify({ items: guestItems }),
+                        });
+                        if (mergeRes.status === 401) {
+                            // Token expired during merge — bail out entirely, leave guest cart intact
+                            return;
+                        }
+                        // Only clear guest cart after a successful merge (2xx)
+                        if (mergeRes.ok) {
+                            clearGuestCart();
+                        }
+                        // Non-2xx non-401: fall through and still try to fetch backend cart
+                    } catch (err) {
+                        console.warn("[Cart] Cart merge request failed; will use guest localStorage:", err);
+                        return;
+                    }
+                } else {
+                    clearGuestCart();
+                }
+
+                // Now fetch the canonical backend cart
+                try {
+                    const cartRes = await fetch(`${API_BASE}/cart`, { headers: authHeaders() });
+                    if (!cartRes.ok) throw new Error(`HTTP ${cartRes.status}`);
+                    const cartJson = await cartRes.json();
+                    const items = cartJson?.data?.items ?? [];
+                    cart = {};
+                    items.forEach(item => { cart[String(item.product_id)] = item.quantity; });
+                    // FIX: Only save to localStorage AFTER we have confirmed backend data
+                    saveGuestCart();
+                } catch (err) {
+                    console.warn("[Cart] Could not fetch backend cart; using local state:", err);
+                    loadGuestCart();
+                }
+            }
+
+            /* ════════════════════════════════════════════════════════
+               PUSH CART TO BACKEND
+            ════════════════════════════════════════════════════════ */
+            async function saveCart() {
+                saveGuestCart();
+                if (!isLoggedIn()) return;
+
+                const items = Object.entries(cart)
+                    .filter(([, qty]) => qty > 0)
+                    .map(([product_id, quantity]) => ({ product_id: parseInt(product_id, 10), quantity }));
+
+                try {
+                    const res = await fetch(`${API_BASE}/cart`, {
+                        method: "PUT",
+                        headers: authHeaders(),
+                        body: JSON.stringify({ items }),
+                    });
+                    if (!res.ok) {
+                        const errJson = await res.json().catch(() => ({}));
+                        console.warn("[Cart] PUT /cart failed:", errJson.message || res.status);
+                    }
+                } catch (err) {
+                    console.warn("[Cart] Could not sync cart to backend:", err);
+                }
+            }
+
+            /* ════════════════════════════════════════════════════════
+               UTILITY
+            ════════════════════════════════════════════════════════ */
+            function getCartTotalQty() {
+                return Object.values(cart).reduce((s, q) => s + q, 0);
+            }
+
+            function updateBadge() {
+                const total = getCartTotalQty();
+                cartBadge.textContent = total;
+                total > 0 ? cartBadge.classList.add("visible") : cartBadge.classList.remove("visible");
+            }
+
+            function escapeHTML(str) {
+                return String(str ?? '')
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            }
+
+            let toastTimer = null;
+            function showToast(msg, icon = "✓", type = "") {
+                toastMsg.textContent = msg;
+                toastEl.querySelector(".toast-icon").textContent = icon;
+                toastEl.className = "toast" + (type ? ` toast--${type}` : "");
+                toastEl.classList.add("show");
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2800);
+            }
+
+            /* ════════════════════════════════════════════════════════
+               BUILD ITEM ROW
+            ════════════════════════════════════════════════════════ */
             function buildItemRow(id, qty, product) {
                 const div = document.createElement("div");
                 div.className = "cart-item";
                 div.dataset.id = id;
-                div.dataset.stock = parseInt(product.stock_quantity, 10) || 0;
-                // Stagger entrance animation delay based on DOM order
+                const stockLimit = parseInt(product.stock_quantity, 10) || 0;
+                div.dataset.stock = stockLimit;
+
                 const delay = (cartContainer.children.length * 0.08).toFixed(2);
                 div.style.animationDelay = `${delay}s`;
 
                 const price = parseFloat(product.price);
-                const imgSrc = product.image_url && product.image_url.trim()
-                    ? product.image_url
-                    : "https://via.placeholder.com/84x84?text=Item";
-                const meta = product.description
-                    ? product.description.slice(0, 65)
-                    : "";
+                // FIX: Use a proper fallback image (no via.placeholder.com — unreliable in prod)
+                const imgSrc = product.image_url?.trim() ||
+                    `https://placehold.co/84x84/eaf2e5/2e7d3c?text=${encodeURIComponent((product.name || 'Item').charAt(0))}`;
+                const meta = product.description ? product.description.slice(0, 90) : product.category || "";
+
+                // FIX: Disable + button immediately if already at stock limit
+                const atMax = qty >= stockLimit && stockLimit > 0;
 
                 div.innerHTML = `
-                    <img
-                        src="${imgSrc}"
-                        alt="${product.name}"
-                        class="item-img"
-                        loading="lazy"
-                        onerror="this.src='https://via.placeholder.com/84x84?text=Item'"
-                    >
-                    <div class="item-details">
-                        <h3>${product.name}</h3>
-                        <p class="item-meta">${meta}</p>
-                        <span class="item-unit-price">₹${price} each</span>
-                    </div>
-                    <div class="qty-control" role="group" aria-label="Quantity">
-                        <button class="qty-btn minus-btn" aria-label="Decrease quantity">−</button>
-                        <span class="qty-display" aria-live="polite">${qty}</span>
-                        <button class="qty-btn plus-btn" aria-label="Increase quantity">+</button>
-                    </div>
-                    <div class="item-line-total">₹${(price * qty).toFixed(2)}</div>
-                    <button class="remove-btn" aria-label="Remove ${product.name}">×</button>
-                `;
+                <img
+                    src="${escapeHTML(imgSrc)}"
+                    alt="${escapeHTML(product.name)}"
+                    class="item-img"
+                    loading="lazy"
+                    onerror="this.src='https://placehold.co/84x84/eaf2e5/2e7d3c?text=Item'"
+                >
+                <div class="item-details">
+                    <h3>${escapeHTML(product.name)}</h3>
+                    <p class="item-meta">${escapeHTML(meta)}</p>
+                    <span class="item-unit-price">₹${price.toFixed(2)} each</span>
+                </div>
+                <div class="qty-control" role="group" aria-label="Quantity for ${escapeHTML(product.name)}">
+                    <button class="qty-btn minus-btn" aria-label="Decrease quantity">−</button>
+                    <span class="qty-display" aria-live="polite" aria-label="${qty} in cart">${qty}</span>
+                    <button class="qty-btn plus-btn" aria-label="Increase quantity" ${atMax ? 'disabled' : ''}>+</button>
+                </div>
+                <div class="item-line-total" aria-label="Line total">₹${(price * qty).toFixed(2)}</div>
+                <button class="remove-btn" aria-label="Remove ${escapeHTML(product.name)} from cart" title="Remove item">×</button>
+            `;
                 return div;
             }
 
-            /* ─────────────────────────────────────────────────────────
-               renderCart  (async)
-               1. Calls initCatalog() to ensure the live DB catalogue is
-                  loaded (no-op if already fetched this session).
-               2. On catalog failure, shows the empty-cart state with a
-                  DB-error subtitle instead of the normal message.
-               3. Silently drops any cart keys (old dummy IDs like "p1")
-                  that do not appear in the live catalogue.
-               4. Falls back gracefully if a product ID is no longer in
-                  the catalogue (unknown id → skipped silently).
-            ───────────────────────────────────────────────────────── */
+            /* ════════════════════════════════════════════════════════
+               UPDATE FREE DELIVERY BAR
+            ════════════════════════════════════════════════════════ */
+            function updateFreeDeliveryBar(subtotal) {
+                if (subtotal >= FREE_DELIVERY_THRESHOLD) {
+                    // Free delivery unlocked
+                    freeDeliveryBar.style.display = 'none';
+                    deliveryFeeEl.innerHTML = '<span class="free-delivery">FREE 🎉</span>';
+                    deliveryFeeEl.closest('.summary-row').querySelector('.label').textContent = 'Delivery Fee';
+                } else {
+                    const needed = FREE_DELIVERY_THRESHOLD - subtotal;
+                    const pct = Math.min((subtotal / FREE_DELIVERY_THRESHOLD) * 100, 100);
+                    freeDeliveryBar.style.display = 'block';
+                    freeDeliveryNeeded.textContent = `₹${needed.toFixed(0)}`;
+                    freeDeliveryProg.style.width = `${pct}%`;
+                    deliveryFeeEl.textContent = `₹${DELIVERY_FEE}`;
+                }
+            }
+
+            /* ════════════════════════════════════════════════════════
+               RENDER CART
+            ════════════════════════════════════════════════════════ */
             async function renderCart() {
-                // ── Load catalogue (single fetch, cached after first call) ─
                 const catalogLoaded = await initCatalog();
 
                 if (!catalogLoaded) {
-                    // API unreachable — show empty state with error message
+                    cartSkeleton.style.display = 'none';
                     cartLayout.style.display = "none";
                     emptyCart.style.display = "flex";
-                    cartSubtitle.textContent = "⚠️ Could not connect to the database to load cart items.";
+                    emptyCartMsg.textContent = "⚠️ Could not connect to the server. Please refresh and try again.";
                     updateBadge();
                     return;
                 }
 
-                // ── Strip stale keys not present in the live catalogue ─────
+                // Strip stale keys not in the live catalogue
                 Object.keys(cart).forEach(id => {
-                    if (!productCatalog[String(id)]) {
-                        delete cart[id];
-                    }
+                    if (!productCatalog[String(id)]) delete cart[id];
                 });
 
                 const ids = Object.keys(cart).filter(id => cart[id] > 0);
 
                 if (ids.length === 0) {
+                    cartSkeleton.style.display = 'none';
                     cartLayout.style.display = "none";
                     emptyCart.style.display = "flex";
-                    cartSubtitle.textContent = "Your cart is empty.";
-                    // Save empty state so ghost data doesn't return on refresh
-                    await saveCart();
+                    emptyCartMsg.textContent = "Your cart is empty.";
+                    cartSubtitle.textContent = "Your cart is empty";
                     updateBadge();
                     return;
                 }
 
-                // ── Loading state ──────────────────────────────────────
+                cartSkeleton.style.display = 'none';
                 emptyCart.style.display = "none";
                 cartLayout.style.display = "grid";
-                cartSubtitle.textContent = "Loading your items…";
-                cartContainer.innerHTML = `
-                    <div style="
-                        padding: 2.5rem 1.5rem;
-                        text-align: center;
-                        color: var(--text-muted);
-                        font-size: 0.97rem;
-                        font-weight: 500;
-                        letter-spacing: 0.2px;
-                    ">
-                        ⏳ Loading cart details...
-                    </div>
-                `;
-
-                // ── Build rows from catalogue map (no extra fetch needed) ─
                 cartContainer.innerHTML = "";
+
                 let subtotal = 0;
                 let totalItems = 0;
 
                 ids.forEach(id => {
                     const product = productCatalog[String(id)];
-                    // Skip if the product ID is no longer in the catalogue
                     if (!product) return;
-
                     const qty = cart[id];
                     const price = parseFloat(product.price);
+                    // FIX: Guard against NaN price
+                    if (isNaN(price)) return;
                     const row = buildItemRow(id, qty, product);
                     cartContainer.appendChild(row);
                     subtotal += price * qty;
                     totalItems += qty;
                 });
 
-                // ── Update order summary ───────────────────────────────
+                const effectiveDelivery = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+
                 totalItemsEl.textContent = totalItems;
                 subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
-                deliveryFeeEl.textContent = `₹${DELIVERY_FEE}`;
-                grandTotalEl.textContent = `₹${(subtotal + DELIVERY_FEE).toFixed(2)}`;
+                grandTotalEl.textContent = `₹${(subtotal + effectiveDelivery).toFixed(2)}`;
                 cartSubtitle.textContent = `${totalItems} item${totalItems > 1 ? "s" : ""} in your cart`;
 
-                await saveCart();
+                updateFreeDeliveryBar(subtotal);
+                loginNudge.classList.toggle("visible", !isLoggedIn());
                 updateBadge();
             }
 
-            /* ─────────────────────────────────────────────────────────
-               EVENT DELEGATION — qty and remove buttons
-               Uses the bubbled click on the container so newly injected
-               rows are covered without re-attaching listeners.
-            ───────────────────────────────────────────────────────── */
-            cartContainer.addEventListener("click", (e) => {
+            /* ════════════════════════════════════════════════════════
+               CART ITEM INTERACTIONS (event delegation)
+               FIX: Debounce rapid clicks to prevent race conditions
+               on qty changes. A pending flag stops overlapping fetches.
+            ════════════════════════════════════════════════════════ */
+            let _qtyPending = false;
+
+            cartContainer.addEventListener("click", async (e) => {
                 const row = e.target.closest(".cart-item");
                 if (!row) return;
                 const id = row.dataset.id;
 
                 if (e.target.classList.contains("plus-btn")) {
+                    if (_qtyPending) return;
                     const stockLimit = parseInt(row.dataset.stock, 10) || 0;
                     const currentQty = cart[id] || 0;
-                    if (currentQty >= stockLimit) {
-                        showToast(`Only ${stockLimit} units available in stock!`);
+                    if (stockLimit > 0 && currentQty >= stockLimit) {
+                        showToast(`Only ${stockLimit} unit${stockLimit === 1 ? "" : "s"} available!`, "⚠", "warn");
                         return;
                     }
+                    _qtyPending = true;
                     cart[id] = currentQty + 1;
-                    renderCart();
-                }
-                else if (e.target.classList.contains("minus-btn")) {
-                    cart[id]--;
-                    if (cart[id] <= 0) delete cart[id];
-                    renderCart();
-                }
-                else if (e.target.classList.contains("remove-btn")) {
+                    await saveCart();
+                    await renderCart();
+                    _qtyPending = false;
+
+                } else if (e.target.classList.contains("minus-btn")) {
+                    if (_qtyPending) return;
+                    _qtyPending = true;
+                    const currentQty = cart[id] || 0;
+                    if (currentQty <= 1) {
+                        // FIX: If qty would hit 0, treat it as a remove action
+                        // instead of setting 0 and leaving a ghost entry
+                        const name = productCatalog[String(id)]?.name || "Item";
+                        delete cart[id];
+                        if (isLoggedIn()) {
+                            saveGuestCart();
+                            try {
+                                await fetch(`${API_BASE}/cart/items/${id}`, {
+                                    method: "DELETE", headers: authHeaders(),
+                                });
+                            } catch (err) { console.warn("[Cart] DELETE item failed:", err); }
+                        } else {
+                            saveGuestCart();
+                        }
+                        await renderCart();
+                        showToast(`${name} removed from cart`);
+                    } else {
+                        cart[id] = currentQty - 1;
+                        await saveCart();
+                        await renderCart();
+                    }
+                    _qtyPending = false;
+
+                } else if (e.target.classList.contains("remove-btn")) {
+                    if (_qtyPending) return;
+                    _qtyPending = true;
                     const name = productCatalog[String(id)]?.name || "Item";
                     delete cart[id];
-                    renderCart();
+
+                    if (isLoggedIn()) {
+                        saveGuestCart();
+                        try {
+                            const res = await fetch(`${API_BASE}/cart/items/${id}`, {
+                                method: "DELETE", headers: authHeaders(),
+                            });
+                            if (!res.ok) {
+                                const errJson = await res.json().catch(() => ({}));
+                                console.warn("[Cart] DELETE item failed:", errJson.message || res.status);
+                            }
+                        } catch (err) { console.warn("[Cart] Could not delete item from backend:", err); }
+                    } else {
+                        saveGuestCart();
+                    }
+
+                    await renderCart();
                     showToast(`${name} removed from cart`);
+                    _qtyPending = false;
                 }
             });
 
-            // ── Checkout button ───────────────────────────────────────
-            // Navigates to the checkout page; toast replaced per Phase 10 prep.
+            /* ════════════════════════════════════════════════════════
+               AUTH GUARD ON CHECKOUT BUTTON
+            ════════════════════════════════════════════════════════ */
             document.getElementById("checkoutBtn").addEventListener("click", () => {
+                // FIX: Prevent checkout if cart is empty (button shouldn't
+                // even be visible, but guard defensively anyway)
+                const total = getCartTotalQty();
+                if (total === 0) {
+                    showToast("Your cart is empty!", "🛒", "warn");
+                    return;
+                }
+                if (!isLoggedIn()) {
+                    sessionStorage.setItem("redirectAfterLogin", "checkout.html");
+                    showToast("Please sign in to proceed to checkout.", "🔑", "warn");
+                    setTimeout(() => { window.location.href = "user-login.html"; }, 1000);
+                    return;
+                }
                 window.location.href = "checkout.html";
             });
 
-            // ── Mobile hamburger ──────────────────────────────────────
+            /* ════════════════════════════════════════════════════════
+               MOBILE HAMBURGER
+            ════════════════════════════════════════════════════════ */
             menuToggle.addEventListener("click", () => {
                 const isOpen = mainNav.classList.toggle("open");
+                menuToggle.classList.toggle("open", isOpen);
                 menuToggle.setAttribute("aria-expanded", isOpen);
             });
 
             mainNav.querySelectorAll("a").forEach(link => {
                 link.addEventListener("click", () => {
                     mainNav.classList.remove("open");
+                    menuToggle.classList.remove("open");
                     menuToggle.setAttribute("aria-expanded", "false");
                 });
             });
 
-            // ── Initial render ────────────────────────────────────────
-            renderCart();
+            // FIX: Close nav on outside click (prevents nav stuck open)
+            document.addEventListener("click", (e) => {
+                if (!mainNav.contains(e.target) && !menuToggle.contains(e.target)) {
+                    mainNav.classList.remove("open");
+                    menuToggle.classList.remove("open");
+                    menuToggle.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            /* ════════════════════════════════════════════════════════
+               BFCache & cross-tab sync
+            ════════════════════════════════════════════════════════ */
+            window.addEventListener("pageshow", async (e) => {
+                // FIX: Only re-init on bfcache restore (persisted=true)
+                // to avoid double-rendering on normal page loads
+                if (e.persisted) {
+                    loadGuestCart();
+                    await renderCart();
+                }
+            });
+
+            window.addEventListener("storage", async (e) => {
+                if (e.key === "manishCartState" || e.key === "user_jwt") {
+                    loadGuestCart();
+                    await renderCart();
+                }
+            });
+
+            /* ════════════════════════════════════════════════════════
+               PAGE INITIALISATION
+            ════════════════════════════════════════════════════════ */
+            if (isLoggedIn()) {
+                cartSubtitle.innerHTML =
+                    'Syncing your cart… <span class="sync-pill">⟳ syncing</span>';
+            }
+
+            // Show skeleton while catalogue loads
+            cartSkeleton.style.display = 'flex';
+
+            loadGuestCart();
+
+            if (isLoggedIn()) {
+                await syncBackendCart();
+            }
+
+            await renderCart();
         });
     </script>
 </body>
